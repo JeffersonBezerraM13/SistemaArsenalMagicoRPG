@@ -2,6 +2,7 @@ package br.dcx.ufpb.jefferson.arsenal.magico;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 public class SistemaArsenalMagico implements ArsenalMagico{
@@ -31,6 +32,17 @@ public class SistemaArsenalMagico implements ArsenalMagico{
             return this.magias.get(id);
         } else throw new MagiaInexistenteException("A magia com o id "+id+" não está cadastrada no sistema");
 
+    }
+
+    @Override
+    public List<Magia> getMagiasPorTipoElementar(TipoElementar tipoElementar) {
+        List<Magia> magiasPorTipoElementar = new LinkedList<>();
+        for(Magia m: this.magias.values()){
+            if(m.getTipo() == tipoElementar){
+                magiasPorTipoElementar.add(m);
+            }
+        }
+        return magiasPorTipoElementar;
     }
 
     @Override
