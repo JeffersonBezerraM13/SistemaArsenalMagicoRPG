@@ -1,8 +1,9 @@
 package br.dcx.ufpb.jefferson.arsenal.magico;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Magia {
+public class Magia implements Serializable {
     private Integer id;
     private String nome;
     private TipoElementar tipo;
