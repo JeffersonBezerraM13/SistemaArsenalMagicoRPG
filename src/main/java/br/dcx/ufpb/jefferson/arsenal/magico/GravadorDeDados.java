@@ -30,8 +30,8 @@ public class GravadorDeDados {
     }
     public static void main(String [] args){
         //Testa gravador
-        Magia magia = new Magia(003,"Tsunami", TipoElementar.AGUA,300.0, 100);
-        Magia magia2 = new Magia(004,"Vento uivante", TipoElementar.AR, 20.0, 50);
+        Magia magia = new Magia(003,"Tsunami", TipoElementar.AGUA,FormaElementar.CHUVA,EfeitoElementar.NORMAL,300.0, 100);
+        Magia magia2 = new Magia(004,"Vento uivante", TipoElementar.AR,FormaElementar.RAIO,EfeitoElementar.LENTIDAO, 20.0, 50);
 
         List<Magia> magias = new LinkedList<>();
         magias.add(magia);
