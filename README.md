@@ -16,7 +16,8 @@ exemplo:
 3º nível em diante precisa ter um fonte menor
 ## Formatando um Link e figuras
 Exemplo com link [Nome do link](Google.com)  
-Exemplo para figuras ![Figuras](collectionsMain180.png "Figuras")
+Exemplo para figuras  
+![Figuras](collectionsMain180.png "Figuras")
 ## Negrito Itálico e Palavra ricada
 **Texto em negrito**  
 *Texto em itálico*  
