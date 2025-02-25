@@ -1,5 +1,7 @@
 package br.dcx.ufpb.jefferson.arsenal.magico;
 
+import br.dcx.ufpb.jefferson.arsenal.magico.futuro.EfeitoElementar;
+import br.dcx.ufpb.jefferson.arsenal.magico.futuro.FormaElementar;
 import org.junit.jupiter.api.Test;
 import java.util.Collection;
 
@@ -10,10 +12,10 @@ public class SistemaArsenalMagicoTest {
     public void TestaArsenalMagico(){
         try {
             SistemaArsenalMagico sistema = new SistemaArsenalMagico();
-            sistema.cadastrarMagia(001,"Esfera Carmesin",TipoElementar.FOGO,FormaElementar.BOLA,EfeitoElementar.QUEIMADURA,120.0,50);
+            sistema.cadastrarMagia(001,"Esfera Carmesin",TipoElementar.FOGO,120.0,50);
             Collection<Magia> magiasPorElemento = sistema.getMagiasPorTipoElementar(TipoElementar.FOGO);
             assertEquals(1,magiasPorElemento.size());
-            sistema.cadastrarMagia(002,"Sopro gélido",TipoElementar.GELO,FormaElementar.RAIO,EfeitoElementar.LENTIDAO, 40.0, 30);
+            sistema.cadastrarMagia(002,"Sopro gélido",TipoElementar.GELO,40.0, 30);
             Collection<Magia> todasAsMagias = sistema.todasAsMagias();
             assertTrue(todasAsMagias.size() == 2);
             Magia m = sistema.getMagia(002);

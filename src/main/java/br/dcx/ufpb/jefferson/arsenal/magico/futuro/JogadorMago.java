@@ -1,4 +1,4 @@
-package br.dcx.ufpb.jefferson.arsenal.magico;
+package br.dcx.ufpb.jefferson.arsenal.magico.futuro;
 
 public class JogadorMago {
     private String nome;

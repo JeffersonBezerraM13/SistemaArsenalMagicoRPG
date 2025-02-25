@@ -1,6 +1,6 @@
 package br.dcx.ufpb.jefferson.aprendizado;
 
-import br.dcx.ufpb.jefferson.arsenal.magico.JogadorMago;
+import br.dcx.ufpb.jefferson.arsenal.magico.futuro.JogadorMago;
 
 import java.util.ArrayList;
 import java.util.Arrays;

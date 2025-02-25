@@ -1,5 +1,8 @@
 package br.dcx.ufpb.jefferson.arsenal.magico;
 
+import br.dcx.ufpb.jefferson.arsenal.magico.futuro.EfeitoElementar;
+import br.dcx.ufpb.jefferson.arsenal.magico.futuro.FormaElementar;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -13,9 +16,9 @@ public class SistemaArsenalMagico implements ArsenalMagico{
     }
 
     @Override
-    public void cadastrarMagia(Integer id, String nome, TipoElementar tipo,FormaElementar forma,EfeitoElementar efeito, Double dano, int custoDeMana) throws MagiaJaExisteException {
+    public void cadastrarMagia(Integer id, String nome, TipoElementar tipo,Double dano, int custoDeMana) throws MagiaJaExisteException {
         if(!this.magias.containsKey(id)){
-            this.magias.put(id, new Magia(id,nome,tipo,forma,efeito,dano,custoDeMana));
+            this.magias.put(id, new Magia(id,nome,tipo,dano,custoDeMana));
         } else throw new MagiaJaExisteException("A magia com o id "+id+" já está cadastrado no sistema");
     }
 

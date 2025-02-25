@@ -1,5 +1,8 @@
 package br.dcx.ufpb.jefferson.arsenal.magico;
 
+import br.dcx.ufpb.jefferson.arsenal.magico.futuro.EfeitoElementar;
+import br.dcx.ufpb.jefferson.arsenal.magico.futuro.FormaElementar;
+
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -7,17 +10,13 @@ public class Magia implements Serializable {
     private Integer id;
     private String nome;
     private TipoElementar tipo;
-    private FormaElementar forma;
-    private EfeitoElementar efeito;
     private Double dano;
     private int custoDeMana;
 
-    public Magia(Integer id, String nome, TipoElementar tipo,FormaElementar forma, EfeitoElementar efeito, Double dano, int custoDeMana) {
+    public Magia(Integer id, String nome, TipoElementar tipo,Double dano, int custoDeMana) {
         this.id = id;
         this.nome = nome;
         this.tipo = tipo;
-        this.forma = forma;
-        this.efeito = efeito;
         this.dano = dano;
         this.custoDeMana = custoDeMana;
     }
@@ -60,22 +59,6 @@ public class Magia implements Serializable {
 
     public void setCustoDeMana(int custoDeMana) {
         this.custoDeMana = custoDeMana;
-    }
-
-    public FormaElementar getForma() {
-        return forma;
-    }
-
-    public void setForma(FormaElementar forma) {
-        this.forma = forma;
-    }
-
-    public EfeitoElementar getEfeito() {
-        return efeito;
-    }
-
-    public void setEfeito(EfeitoElementar efeito) {
-        this.efeito = efeito;
     }
 
     @Override
