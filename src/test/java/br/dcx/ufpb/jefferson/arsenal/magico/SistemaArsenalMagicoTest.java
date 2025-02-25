@@ -29,8 +29,6 @@ public class SistemaArsenalMagicoTest {
         } catch (MagiaInexistenteException | MagiaJaExisteException e){
             e.printStackTrace();
             fail();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
 
 

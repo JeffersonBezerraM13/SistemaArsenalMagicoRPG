@@ -1,10 +1,15 @@
 package br.dcx.ufpb.jefferson.arsenal.magico;
 
+import br.dcx.ufpb.jefferson.arsenal.magico.gui.ArsenalMagicoGUI;
+
 import javax.swing.*;
+import java.io.IOException;
 
 public class ProgramaArsenalMagico {
-    public static void main(String [] args){
+    public static void main(String [] args) throws IOException {
         SistemaArsenalMagico sistema = new SistemaArsenalMagico();
+        sistema.recuperarDados();
+        JFrame janelaMain = new ArsenalMagicoGUI();
         ImageIcon iconNull = new ImageIcon((String) null);
         while(true){
             String strDisplayMagia = "";
@@ -22,37 +27,37 @@ public class ProgramaArsenalMagico {
                         break;
                     case "1":
                         try {
-                            Integer idMagiaC1 = Integer.parseInt(JOptionPane.showInputDialog(null,
+                            Integer idMagiaC1 = Integer.parseInt(JOptionPane.showInputDialog(janelaMain,
                                     "Insira o ID da magia:", "Cadastro de magia", JOptionPane.QUESTION_MESSAGE, iconNull, null, null).toString());
-                            String nomeMagiaC1 = JOptionPane.showInputDialog(null,
+                            String nomeMagiaC1 = JOptionPane.showInputDialog(janelaMain,
                                     "Insira o nome da magia:", "Cadastro de magia", JOptionPane.QUESTION_MESSAGE, iconNull, null, null).toString();
                             if(nomeMagiaC1.isEmpty()){
-                                JOptionPane.showMessageDialog(null,"Insira um nome válido","Mensagem do sistema",JOptionPane.INFORMATION_MESSAGE,iconNull);
-                                break;
+                                JOptionPane.showMessageDialog(janelaMain,"Insira um nome válido","Mensagem do sistema",JOptionPane.INFORMATION_MESSAGE,iconNull);
+                                //break;
                             }
-                            TipoElementar [] tipoOptions = {TipoElementar.AGUA
+                            TipoElementar[] tipoOptions = {TipoElementar.AGUA
                                     , TipoElementar.GELO
                                     , TipoElementar.AR
                                     , TipoElementar.TERRA
                                     , TipoElementar.FOGO};
                             JComboBox<TipoElementar> comboBoxTipoElementar = new JComboBox<>(tipoOptions);
-                            TipoElementar tipoElementarC1;
-                            if (JOptionPane.showConfirmDialog(null,comboBoxTipoElementar,"Tipo elementar", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,iconNull) == JOptionPane.OK_OPTION) {
+                            TipoElementar tipoElementarC1 = null;
+                            if (JOptionPane.showConfirmDialog(janelaMain,comboBoxTipoElementar,"Tipo elementar", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,iconNull) == JOptionPane.OK_OPTION) {
                                 tipoElementarC1 = (TipoElementar) comboBoxTipoElementar.getSelectedItem();
                             } else {
-                                JOptionPane.showMessageDialog(null, "Cadastro cancelado!","Mensagem do sistema",JOptionPane.INFORMATION_MESSAGE,iconNull);
-                                break;
+                                JOptionPane.showMessageDialog(janelaMain, "Cadastro cancelado!","Mensagem do sistema",JOptionPane.INFORMATION_MESSAGE,iconNull);
+                                //break;
                             }
-                            Double danoC1 = Double.parseDouble(JOptionPane.showInputDialog(null,
+                            Double danoC1 = Double.parseDouble(JOptionPane.showInputDialog(janelaMain,
                                     "Insira o dano da magia (um número real):","Cadastro de magia",JOptionPane.QUESTION_MESSAGE,iconNull,null,null).toString());
-                            int manaC1 = Integer.parseInt(JOptionPane.showInputDialog(null,
+                            int manaC1 = Integer.parseInt(JOptionPane.showInputDialog(janelaMain,
                                     "Insira o custo de mana:","Cadastro de magia",JOptionPane.QUESTION_MESSAGE,iconNull,null,null).toString());
                             sistema.cadastrarMagia(idMagiaC1, nomeMagiaC1, tipoElementarC1, danoC1, manaC1);
                             JOptionPane.showMessageDialog(null,"Cadastro realizado com sucesso", "Cadastro de magia",JOptionPane.INFORMATION_MESSAGE,iconNull);
-                        } catch (NumberFormatException e) {
+                        } catch (NumberFormatException exception) {
                             JOptionPane.showMessageDialog(null, "Insira um valor válido", "Mensagem de erro", JOptionPane.ERROR_MESSAGE, iconNull);
-                        } catch (MagiaJaExisteException e){
-                            JOptionPane.showMessageDialog(null,e.getMessage(),"Mensagem do sistema",JOptionPane.INFORMATION_MESSAGE,iconNull);
+                        } catch (MagiaJaExisteException exception){
+                            JOptionPane.showMessageDialog(null,exception.getMessage(),"Mensagem do sistema",JOptionPane.INFORMATION_MESSAGE,iconNull);
                         }
                         break;
                     case "2":
@@ -61,7 +66,7 @@ public class ProgramaArsenalMagico {
                             break;
                         }
                         try {
-                            Integer idC2 = Integer.parseInt(JOptionPane.showInputDialog(null, strDisplayMagia + "Insira o ID da magia que deseja alterar:", "Alterar magia", JOptionPane.QUESTION_MESSAGE, iconNull, null, null).toString());
+                            Integer idC2 = Integer.parseInt(JOptionPane.showInputDialog(null, strDisplayMagia + "\nInsira o ID da magia que deseja alterar:", "Alterar magia", JOptionPane.QUESTION_MESSAGE, iconNull, null, null).toString());
                             Magia m = sistema.getMagia(idC2);
                             String alterarOptions = JOptionPane.showInputDialog(null, """
                                     1 - ID
@@ -153,8 +158,10 @@ public class ProgramaArsenalMagico {
                         break;
                 }
             } catch (NullPointerException e) {
+
                 break;
             }
+            sistema.gravarDados();
         }
 
     }

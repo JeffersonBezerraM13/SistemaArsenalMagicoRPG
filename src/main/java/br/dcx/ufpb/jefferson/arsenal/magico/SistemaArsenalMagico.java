@@ -1,8 +1,5 @@
 package br.dcx.ufpb.jefferson.arsenal.magico;
 
-import br.dcx.ufpb.jefferson.arsenal.magico.futuro.EfeitoElementar;
-import br.dcx.ufpb.jefferson.arsenal.magico.futuro.FormaElementar;
-
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -10,7 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class SistemaArsenalMagico implements ArsenalMagico{
-    private final HashMap<Integer, Magia> magias;
+    private HashMap<Integer, Magia> magias;
     private GravadorDeDados gravadorDeDados;
 
     public SistemaArsenalMagico(){
@@ -57,12 +54,12 @@ public class SistemaArsenalMagico implements ArsenalMagico{
     }
 
     @Override
-    public void salvarDados() throws IOException {
-
+    public void gravarDados() throws IOException {
+        this.gravadorDeDados.gravaMagia(this.magias);
     }
 
     @Override
-    public void gravarDados() throws IOException {
-
+    public void recuperarDados() throws IOException {
+        this.magias = this.gravadorDeDados.recuperaMagias();
     }
 }
