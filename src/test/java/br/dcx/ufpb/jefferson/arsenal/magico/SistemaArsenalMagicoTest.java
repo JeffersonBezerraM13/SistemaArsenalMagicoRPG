@@ -3,6 +3,8 @@ package br.dcx.ufpb.jefferson.arsenal.magico;
 import br.dcx.ufpb.jefferson.arsenal.magico.futuro.EfeitoElementar;
 import br.dcx.ufpb.jefferson.arsenal.magico.futuro.FormaElementar;
 import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
 import java.util.Collection;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,8 +29,9 @@ public class SistemaArsenalMagicoTest {
         } catch (MagiaInexistenteException | MagiaJaExisteException e){
             e.printStackTrace();
             fail();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-
 
 
     }
