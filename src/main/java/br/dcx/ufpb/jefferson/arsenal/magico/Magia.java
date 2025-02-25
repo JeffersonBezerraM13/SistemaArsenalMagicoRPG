@@ -77,9 +77,9 @@ public class Magia implements Serializable {
     @Override
     public String toString() {
         return ("Magia "+this.id+
-                ": nome: " + nome + '\'' +
-                ", tipo: " + tipo +
-                ", dano: " + dano +
-                ", custoDeMana:");
+                ":\nNome: " + this.nome +
+                ", tipo: " + this.tipo +
+                ", dano: " + this.dano +
+                ", custoDeMana: "+this.custoDeMana);
     }
 }

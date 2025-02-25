@@ -19,7 +19,7 @@ public class SistemaArsenalMagico implements ArsenalMagico{
     public void cadastrarMagia(Integer id, String nome, TipoElementar tipo,Double dano, int custoDeMana) throws MagiaJaExisteException {
         if(!this.magias.containsKey(id)){
             this.magias.put(id, new Magia(id,nome,tipo,dano,custoDeMana));
-        } else throw new MagiaJaExisteException("A magia com o id "+id+" já está cadastrado no sistema");
+        } else throw new MagiaJaExisteException("A magia com o ID "+id+" já está cadastrado no sistema");
     }
 
     @Override
