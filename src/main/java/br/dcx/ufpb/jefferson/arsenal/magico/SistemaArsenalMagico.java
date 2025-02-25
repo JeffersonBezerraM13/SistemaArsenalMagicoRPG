@@ -10,9 +10,11 @@ import java.util.List;
 
 public class SistemaArsenalMagico implements ArsenalMagico{
     private final HashMap<Integer, Magia> magias;
+    private GravadorDeDados gravadorDeDados;
 
     public SistemaArsenalMagico(){
         this.magias = new HashMap<>();
+        this.gravadorDeDados = new GravadorDeDados();
     }
 
     @Override

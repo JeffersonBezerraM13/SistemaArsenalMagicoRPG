@@ -1,15 +1,15 @@
 package br.dcx.ufpb.jefferson.arsenal.magico;
 
-
 import javax.swing.*;
 
 public class ProgramaArsenalMagico {
     public static void main(String [] args){
         SistemaArsenalMagico sistema = new SistemaArsenalMagico();
         ImageIcon iconNull = new ImageIcon((String) null);
-        StringBuilder strDisplayMagia = new StringBuilder();
-        for(Magia m: sistema.todasAsMagias()) strDisplayMagia.append(m.toString()+"\n");
+        JFrame janela = new JFrame();
         while(true){
+            String strDisplayMagia = "";
+            for(Magia m: sistema.todasAsMagias()) strDisplayMagia += m.toString()+"\n";
             try {
                 String opcao = JOptionPane.showInputDialog(null,
                         """
