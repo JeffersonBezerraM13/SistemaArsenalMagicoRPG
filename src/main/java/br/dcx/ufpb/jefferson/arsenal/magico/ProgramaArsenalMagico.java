@@ -158,10 +158,10 @@ public class ProgramaArsenalMagico {
                         break;
                 }
             } catch (NullPointerException e) {
-
                 break;
             }
             sistema.gravarDados();
+            break;
         }
 
     }
