@@ -6,7 +6,6 @@ public class ProgramaArsenalMagico {
     public static void main(String [] args){
         SistemaArsenalMagico sistema = new SistemaArsenalMagico();
         ImageIcon iconNull = new ImageIcon((String) null);
-        JFrame janela = new JFrame();
         while(true){
             String strDisplayMagia = "";
             for(Magia m: sistema.todasAsMagias()) strDisplayMagia += m.toString()+"\n";

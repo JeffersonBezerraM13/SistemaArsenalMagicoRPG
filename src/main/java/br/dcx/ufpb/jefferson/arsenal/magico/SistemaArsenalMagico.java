@@ -3,6 +3,7 @@ package br.dcx.ufpb.jefferson.arsenal.magico;
 import br.dcx.ufpb.jefferson.arsenal.magico.futuro.EfeitoElementar;
 import br.dcx.ufpb.jefferson.arsenal.magico.futuro.FormaElementar;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -53,5 +54,15 @@ public class SistemaArsenalMagico implements ArsenalMagico{
     @Override
     public Collection<Magia> todasAsMagias() {
         return this.magias.values();
+    }
+
+    @Override
+    public void salvarDados() throws IOException {
+
+    }
+
+    @Override
+    public void gravarDados() throws IOException {
+
     }
 }
