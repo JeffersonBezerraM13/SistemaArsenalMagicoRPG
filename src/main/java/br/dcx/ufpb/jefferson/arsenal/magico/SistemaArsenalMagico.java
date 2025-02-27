@@ -31,10 +31,8 @@ public class SistemaArsenalMagico implements ArsenalMagico{
 
     @Override
     public Magia getMagia(int id) throws MagiaInexistenteException {
-        if(this.magias.containsKey(id)){
-            return this.magias.get(id);
-        } else throw new MagiaInexistenteException("A magia com o id "+id+" não está cadastrada no sistema");
-
+        if(this.magias.containsKey(id)) return this.magias.get(id);
+        else throw new MagiaInexistenteException("A magia com o id "+id+" não está cadastrada no sistema");
     }
 
     @Override
