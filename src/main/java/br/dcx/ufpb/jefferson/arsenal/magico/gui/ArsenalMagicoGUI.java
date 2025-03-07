@@ -11,13 +11,17 @@ import java.awt.event.*;
 import java.io.IOException;
 
 public class ArsenalMagicoGUI extends JFrame {
+    SistemaArsenalMagico sistema = new SistemaArsenalMagico();
     JLabel linha1, linha2; //setando o JLabel
     ImageIcon imageIcon = new ImageIcon("collectionsMain180.png"); //Imagem que eu vou usar
     ImageIcon iconNull = new ImageIcon((String) null);
-    SistemaArsenalMagico sistema = new SistemaArsenalMagico();
+
     //São os atributos da classe
     //Pode colocar mais coisas
     JButton botaoCadastrar, botaoPesquisar,botaoAlterar, botaoRemover;
+    JRadioButton botaoSelec;
+    JPanel painel;
+    JTable table;
 
     public ArsenalMagicoGUI() throws IOException {
         setTitle("Título da página - Pode ser alterado");
