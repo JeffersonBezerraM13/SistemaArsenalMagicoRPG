@@ -1,4 +1,4 @@
-package br.dcx.ufpb.jefferson.aprendizado.swing;
+package br.dcx.ufpb.jefferson.arsenal.magico.gui;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,12 +25,9 @@ public class Launcher {
                         break;
                     }
                 }
+                 */
                 MainFrame frame = new MainFrame();
                 frame.show();
-                 */
-                //MainFrameActionListener janela = new MainFrameActionListener();
-                JCheckBoxMainFrame janela = new JCheckBoxMainFrame();
-                janela.show();
             }
         });
     }
