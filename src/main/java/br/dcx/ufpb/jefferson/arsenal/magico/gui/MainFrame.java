@@ -75,7 +75,7 @@ public class MainFrame {
                 saveMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
                 saveMenuItem.addActionListener(al -> {
                     reproduzirSom("C:\\Users\\bezer\\IdeaProjects\\SistemaArsenalMagicoRPG\\src\\main\\resources\\sounds\\plimv2.wav");
-                    System.out.println("Salvou hahaha");
+                    System.out.println("Salvou confia");
                     //system.gravarDados();
                 });
 
