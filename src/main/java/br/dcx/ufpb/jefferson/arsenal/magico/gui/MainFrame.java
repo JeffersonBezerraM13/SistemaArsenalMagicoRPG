@@ -5,12 +5,15 @@ import br.dcx.ufpb.jefferson.arsenal.magico.MagiaJaExisteException;
 import br.dcx.ufpb.jefferson.arsenal.magico.SistemaArsenalMagico;
 import br.dcx.ufpb.jefferson.arsenal.magico.TipoElementar;
 import org.jetbrains.annotations.NotNull;
+
+import javax.sound.sampled.*;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.io.IOException;
 
 public class MainFrame {
@@ -71,6 +74,7 @@ public class MainFrame {
                 this.saveMenuItem = new JMenuItem("Salvar");
                 saveMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
                 saveMenuItem.addActionListener(al -> {
+                    reproduzirSom("C:\\Users\\bezer\\IdeaProjects\\SistemaArsenalMagicoRPG\\src\\main\\resources\\sounds\\plimv2.wav");
                     System.out.println("Salvou hahaha");
                     //system.gravarDados();
                 });
@@ -238,6 +242,22 @@ public class MainFrame {
         messageFrame.setTitle(title);
         userMessage.setText(message);
         messageFrameBasicShow();
+    }
+    private static void reproduzirSom(String caminhoDoSom) {
+        try {
+            // Carrega o arquivo de som
+            File arquivoDeSom = new File(caminhoDoSom);
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(arquivoDeSom);
+
+            // Obtém um Clip para reproduzir o som
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+
+            // Reproduz o som
+            clip.start();
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            System.err.println("Erro ao reproduzir o som: " + e.getMessage());
+        }
     }
     public void showMain(){
         this.frame.setVisible(true);
