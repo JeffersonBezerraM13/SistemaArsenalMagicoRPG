@@ -28,7 +28,7 @@ public class Launcher2 {
                 frame.show();
                 //MainFrameActionListener janela = new MainFrameActionListener();
                 //JCheckBoxMainFrame janela = new JCheckBoxMainFrame();
-                //janela.show();
+                //janela.showMain();
             }
         });
     }

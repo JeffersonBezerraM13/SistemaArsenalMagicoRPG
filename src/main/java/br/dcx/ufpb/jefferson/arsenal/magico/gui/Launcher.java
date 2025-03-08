@@ -1,7 +1,7 @@
 package br.dcx.ufpb.jefferson.arsenal.magico.gui;
 
-import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 
 public class Launcher {
     public static void main(String [] args){
@@ -26,8 +26,13 @@ public class Launcher {
                     }
                 }
                  */
-                MainFrame frame = new MainFrame();
-                frame.show();
+                MainFrame frame = null;
+                try {
+                    frame = new MainFrame();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                frame.showMain();
             }
         });
     }

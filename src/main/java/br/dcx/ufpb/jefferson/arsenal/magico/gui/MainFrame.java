@@ -5,131 +5,160 @@ import br.dcx.ufpb.jefferson.arsenal.magico.MagiaJaExisteException;
 import br.dcx.ufpb.jefferson.arsenal.magico.SistemaArsenalMagico;
 import br.dcx.ufpb.jefferson.arsenal.magico.TipoElementar;
 import org.jetbrains.annotations.NotNull;
-
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 
 public class MainFrame {
     private JFrame frame,actionFrame,messageFrame;
-    private JMenuBar menuBar; //A propria barra de menu
-    private JMenu systemMenu; //"Sistema"
-    private JMenuItem registerMenu,saveMenuItem; //"Sistema-Cadastrar","Sistema-Salvar"
-    private JPanel mainPanel,actionPanel;
-    private JTextField idField,nomeField, tipoField, danoField, custoManaField; //TODO o field
-    private ArsenalMagico system  = new SistemaArsenalMagico();
-    private JTextArea userMessage;
+    private JMenuBar menuBar;
+    private JMenu systemMenu;
+    private JMenuItem registerMenu,saveMenuItem, changeMenuItem, removeMenuItem;
 
-    public MainFrame(){
+    private JPanel actionPanel;
+    private JTextField idField,nomeField, tipoField, danoField, custoManaField; //TODO o field tipo
+    private JLabel fundoPadrao, userMessage;
+
+    //private JTextPane textPanel;
+    private final ImageIcon miniIcon = new ImageIcon("C:\\Users\\bezer\\IdeaProjects\\SistemaArsenalMagicoRPG\\src\\main\\resources\\icons\\miniatura.png");
+    private final ImageIcon backGround = new ImageIcon("C:\\Users\\bezer\\IdeaProjects\\SistemaArsenalMagicoRPG\\src\\main\\resources\\icons\\backGroundMain.png");
+    private final ImageIcon backGroundDesfocado = new ImageIcon("C:\\Users\\bezer\\IdeaProjects\\SistemaArsenalMagicoRPG\\src\\main\\resources\\icons\\backGroundDefocado.png");
+    private GridBagConstraints gbc = new GridBagConstraints();;
+
+    private ArsenalMagico system  = new SistemaArsenalMagico();
+
+    public MainFrame() throws IOException {
         initialize();
     }
 
-    public void initialize(){
-        this.frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        Dimension screanSize = Toolkit.getDefaultToolkit().getScreenSize();
-        System.out.println(screanSize.width); //width: 1366
-        System.out.println(screanSize.height); //heitgh:768
-        frame.setSize((int) (screanSize.width/2), (int) (screanSize.height/2));
-        frame.setTitle("Seu Arsenal Magico");
-        frame.setResizable(false);
-        frame.setLocationRelativeTo(null);
-        frame.getContentPane().setBackground(new Color(0xFF0000));
-        frame.setLayout(new BorderLayout(10,10));
-        frame.setIconImage(new ImageIcon("C:\\Users\\bezer\\IdeaProjects\\SistemaArsenalMagicoRPG\\collectionsMain180.png").getImage());
-        //frame.setIconImage = a imagem que fica no título
-        //Quero mudar a cor da barra onde fica o titulo
+    public void initialize() throws IOException {
+        messageFrameBasic(); //frame com painel basico padrão para mensagens do sistema
+        actionFrameBasic(); //frane com painel basico padrão para outras janelas sem ser a principal
 
-        this.mainPanel = new JPanel();
-        mainPanel.setBackground(new Color(0xDADF6D));
-        JButton botaoTest = new JButton("Test");
-        botaoTest.addActionListener(botaoAl -> System.out.println("Clicado"));
+
+        this.frame = new JFrame("Seu Arsenal Magico");
+        Font fontPadrao = new Font(Font.DIALOG_INPUT, Font.BOLD, 16);
+        Color corDaBarra = frame.getForeground();
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setSize(backGround.getIconWidth(),backGround.getIconHeight()+39); //38 é a altura da barra de menu
+        frame.setResizable(true);
+        frame.setFont(fontPadrao);
+        frame.setLocationRelativeTo(null);
+        frame.setLayout(new GridBagLayout());
+        frame.setIconImage(miniIcon.getImage());
+
         { //Barra de menu
-            Font f =  new Font("sans-serif", Font.BOLD, 15);
-            UIManager.put("Menu.font",f);
-            UIManager.put("MenuItem.font",f);
+            UIManager.put("Menu.font",fontPadrao); //font da barra e do menu
+            UIManager.put("MenuItem.font",fontPadrao);
+            //UIManager.setLookAndFeel(NimbusLookAndFeel);
 
             this.menuBar = new JMenuBar();
-            menuBar.getComponent().setBackground(new Color(0x47932B));
-            menuBar.setToolTipText("Tooltip da barra do menu");
+            menuBar.setToolTipText("Menu do sistema");
+            //Talvez mudar a tooltip de alguma forma
 
             this.systemMenu = new JMenu("Sistema");
+                systemMenu.setBorder(BorderFactory.createLineBorder(corDaBarra, 1));
+                systemMenu.setIconTextGap(8);
+                systemMenu.setBorderPainted(true);
+                systemMenu.setForeground(corDaBarra);
+                systemMenu.menuSelectionChanged(false);
+                systemMenu.addSeparator();
+
                 this.saveMenuItem = new JMenuItem("Salvar");
                 saveMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
                 saveMenuItem.addActionListener(al -> {
                     System.out.println("Salvou hahaha");
+                    //system.gravarDados();
                 });
-                saveMenuItem.setIconTextGap(10);
+
 
                 this.registerMenu = new JMenuItem("Cadastrar");
-                registerMenu.addActionListener(alRegis -> {
-                    /**
-                    this.frame = new JFrame("Nome cadastrados");
-                    frame.setLocation(0,0);
-                    frame.setSize(screanSize);
-                    frame.setVisible(true);
-                    */
-                    this.actionFrame = new JFrame("Cadastrar magia");
-                    actionFrame.setLayout(new GridBagLayout());
-                    actionFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                    actionFrame.setSize(screanSize.width/2,screanSize.height/2);
-                    actionFrame.setLocationRelativeTo(null);
+                registerMenu.addActionListener(ral -> {
+                    this.hideMain();
+                    actionFrameCadastro();
+                    actionFrameBasicShow();
+                });
+                this.changeMenuItem = new JMenuItem("Alterar");
+                changeMenuItem.addActionListener(cal -> {
 
-                    this.actionPanel =  new JPanel(new GridBagLayout());
-                    actionPanel.setBackground(new Color(0xE879FA));
-                    actionPanel.setSize(screanSize.width/2,screanSize.height/2);
-                    GridBagConstraints constraints = new GridBagConstraints();
-                    constraints.insets = new Insets(5,5,5,5);
-                    constraints.anchor = GridBagConstraints.WEST;
+                });
+                this.removeMenuItem = new JMenuItem("Remover");
+                removeMenuItem.addActionListener(ral -> {
 
-                    idField = adicionarCampo(actionPanel, constraints, "ID:",0);
-                    nomeField = adicionarCampo(actionPanel, constraints,"Nome:", 1);
-                    tipoField = adicionarCampo(actionPanel, constraints,"Tipo elementar:",2);
-                    danoField = adicionarCampo(actionPanel, constraints,"Dano:",3);
-                    custoManaField = adicionarCampo(actionPanel, constraints,"Custo de mana:",4);
-
-                    JButton cadastrarButton = new JButton("Cadastrar");
-                    constraints.gridx = 0;
-                    constraints.gridy = 5;
-                    constraints.gridwidth = 2; //ocupa duas colunas
-                    constraints.anchor = GridBagConstraints.CENTER; //centralizar botão
-                    actionPanel.add(cadastrarButton, constraints);
-
-                    cadastrarButton.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            cadastrar();
-                        }
-                    });
-
-                    actionFrame.add(actionPanel);
-                    actionFrame.setVisible(true);
-                    //system.cadastrarMagia(nome,tipo,dano,custoDeMana);
                 });
         }
         //Adicionando as camadas
-                systemMenu.add(saveMenuItem);
-                systemMenu.add(registerMenu);
-            menuBar.add(systemMenu);
+        systemMenu.add(registerMenu);
+        systemMenu.add(changeMenuItem);
+        systemMenu.add(removeMenuItem);
+        systemMenu.add(saveMenuItem);
 
-        frame.add(menuBar, BorderLayout.NORTH);
-        mainPanel.add(botaoTest);
-        frame.add(mainPanel);
+        menuBar.add(systemMenu);
+
+        gbc.insets = new Insets(0,16,0,0); //top,left,botton,right - isso é a distancia de cima,esquerda,baixo e direita do componente com o grid do container
+        gbc.ipady = 1; //esses 3 juntos
+        gbc.ipadx = 0; //esse
+        gbc.anchor = GridBagConstraints.NORTH; //e esse é a distancia x y no sentino northwest que o componente ta se distanciando no outro
+        gbc.fill = 0; //usa contatantes para determinar onde o componente deverá ficar no container E.: GridBagConstraints.BOTH
+        gbc.gridy = 0; // nao entendi muito bem oq ele faz
+        gbc.gridx = 0; // não entendi muito bem oq ele faz
+        gbc.weighty = 0.0; // se for 1 gruda na direcao da ancora
+        gbc.weightx = 0.0; // se for 1 gruda na direcao da ancora
+        gbc.gridheight = 0;
+        gbc.gridwidth = 0;
+        frame.add(menuBar, gbc);
+
+        gbc.anchor = GridBagConstraints.CENTER;
+        frame.add(new JLabel(backGround), gbc);
     }
-    private static @NotNull JTextField adicionarCampo(@NotNull JPanel panel, @NotNull GridBagConstraints contrains, String labelText, int linha){
-        JLabel label = new JLabel(labelText);
-        contrains.gridx = 0;
-        contrains.gridy = linha;
-        panel.add(label, contrains);
+    private void actionFrameBasic(){
+        this.actionFrame = new JFrame();
+        actionFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        //Dimension screanSize = Toolkit.getDefaultToolkit().getScreenSize();
+        actionFrame.setSize(backGroundDesfocado.getIconWidth(),backGroundDesfocado.getIconHeight());
+        actionFrame.setLocationRelativeTo(null);
+        actionFrame.setResizable(false);
+        actionFrame.setLayout(new GridBagLayout());
+        actionFrame.setIconImage(miniIcon.getImage());
 
-        JTextField field = new JTextField(20);
-        contrains.gridx = 1;
-        contrains.gridy = linha;
-        panel.add(field,contrains);
 
-        return field;
+        this.actionPanel = new JPanel(new GridBagLayout());
+        this.fundoPadrao = new JLabel(backGroundDesfocado);
+        fundoPadrao.setLayout(new GridBagLayout());
+    }
+    private void actionFrameCadastro(){
+        this.actionFrame.setTitle("Cadastrar magia");
+        GridBagConstraints gbcCad = new GridBagConstraints();
+        gbcCad.insets = new Insets(5,5,5,5);
+        gbcCad.anchor = GridBagConstraints.EAST; //para ficar colado na barra de busca
+        idField = adicionarCampo(fundoPadrao, gbcCad, "ID:",0);
+        nomeField = adicionarCampo(fundoPadrao, gbcCad,"Nome:", 1);
+        tipoField = adicionarCampo(fundoPadrao, gbcCad,"Tipo elementar:",2);
+        danoField = adicionarCampo(fundoPadrao, gbcCad,"Dano:",3);
+        custoManaField = adicionarCampo(fundoPadrao, gbcCad,"Custo de mana:",4);
+
+        gbcCad.gridx = 0;
+        gbcCad.gridy = 5;
+        gbcCad.gridwidth = 2; //ocupa duas colunas
+        gbcCad.anchor = GridBagConstraints.CENTER; //centralizar botão
+        JButton cadastrarButton = new JButton("Cadastrar"); //TODO: adicionar um jeito de quando apertar enter ele vai apertar o botao
+        cadastrarButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cadastrar();
+            }
+        });
+        fundoPadrao.add(cadastrarButton, gbcCad);
+        gbcCad.anchor = GridBagConstraints.CENTER;
+        gbcCad.gridy = 1;
+        gbcCad.gridx = 1;
+        actionPanel.add(fundoPadrao, gbcCad);
+        gbcCad.anchor = GridBagConstraints.CENTER;
+        actionFrame.add(actionPanel,gbcCad);
     }
     private void cadastrar() throws MagiaJaExisteException {
         try {
@@ -141,23 +170,79 @@ public class MainFrame {
             int custoMana = Integer.parseInt(custoManaField.getText());
             system.cadastrarMagia(id,nome, tipo, dano, custoMana);
         } catch (NumberFormatException e){
-            userMessageSystem(e.getMessage());
+            userMessageSystem("Mesangem de erro", "Insira um número válido");
         }
     }
-    private void userMessageSystem(String message){
-        messageFrame = new JFrame();
-        messageFrame.setVisible(true);
+    private void actionFrameBasicShow(){
+        this.actionFrame.setVisible(true);
+    }
+    private void messageFrameBasic(){ //Frame padrão para mensagens do sistema
+        this.messageFrame = new JFrame();
         messageFrame.setSize(300,200);
         messageFrame.setLocationRelativeTo(null);
         messageFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        userMessage = new JTextArea(message);
+        messageFrame.setLayout(new BorderLayout());
+        messageFrame.setResizable(false);
+        messageFrame.setIconImage(miniIcon.getImage());
+
+        JPanel painel = new JPanel();
+        //Border emptyBorder = BorderFactory.createEmptyBorder(10, 10, 10, 10); // Topo, esquerda, baixo, direita
+        //Border lineBorder = BorderFactory.createLineBorder(Color.RED, 2); // Cor e espessura
+        Border raisedBorder = BorderFactory.createRaisedBevelBorder(); // Relevo LINDO ESSE
+        //Border loweredBorder = BorderFactory.createLoweredBevelBorder(); // Rebaixado
+        Border titledBorder = BorderFactory.createTitledBorder("Mensagem do Sistema"); //LEGAL
+        //Border outerBorder = BorderFactory.createLineBorder(Color.BLUE, 2); //azul
+        //Border innerBorder = BorderFactory.createEmptyBorder(5, 5, 5, 5);
+        Border compoundBorder = BorderFactory.createCompoundBorder(raisedBorder, titledBorder); //Mesclando varias bordas
+        //Border matteBorder = BorderFactory.createMatteBorder(1, 1, 1, 1, Color.GREEN); // Topo, esquerda, baixo, direita, cor
+        //Border etchedBorder = BorderFactory.createEtchedBorder(); // Efeito de gravura
+        painel.setBorder(compoundBorder);
+
+        JButton okButton = new JButton("OK");
+        okButton.addActionListener(okal -> {
+            messageFrame.setVisible(false);
+        });
+        gbc.anchor = GridBagConstraints.SOUTH;
+        gbc.weighty = 1.0;
+        painel.add(okButton, gbc);
+        //TODO essa função de quando apertar o enter ele já entender como OK!
+        //okButton.setMnemonic(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_MASK).getKeyChar());
+
+        this.userMessage = new JLabel();
+        userMessage.setHorizontalTextPosition(SwingConstants.CENTER);
+        userMessage.setVerticalTextPosition(SwingConstants.CENTER);
         userMessage.setFont(new Font("sans-serif", Font.BOLD, 18));
-        messageFrame.add(userMessage);
+        painel.add(userMessage, BorderLayout.CENTER);
+        painel.add(okButton, BorderLayout.LINE_END); //Queria deixar ele mais no centro e embaixo
+        messageFrame.add(painel);
     }
-    public void show(){
+    private void messageFrameBasicShow(){
+        this.messageFrame.setVisible(true);
+    }
+    private static @NotNull JTextField adicionarCampo(@NotNull JLabel labelFundoPadrao, @NotNull GridBagConstraints gbcM, String labelText, int linha){
+        JLabel label2 = new JLabel(labelText);
+        label2.setFont(new Font("sans-serif", Font.BOLD, 16));
+        label2.setForeground(new Color(0xFFFFFF));
+        gbcM.gridx = 0;
+        gbcM.gridy = linha;
+        labelFundoPadrao.add(label2, gbcM);
+
+        JTextField field = new JTextField(20);
+        gbcM.gridx = 1;
+        gbcM.gridy = linha;
+        labelFundoPadrao.add(field, gbcM);
+
+        return field;
+    }
+    private void userMessageSystem(String title,String message){
+        messageFrame.setTitle(title);
+        userMessage.setText(message);
+        messageFrameBasicShow();
+    }
+    public void showMain(){
         this.frame.setVisible(true);
     }
-    public void hide(){
+    public void hideMain(){
         this.frame.setVisible(false);
     }
 }
