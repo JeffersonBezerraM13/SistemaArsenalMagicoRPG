@@ -8,7 +8,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.sound.sampled.*;
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,12 +19,19 @@ public class MainFrame {
     private JFrame frame,actionFrame,messageFrame;
     private JPanel panel,actionPanel,messagePanel;
     private JLabel label, actionLabel,messageLabel;
+
     private JMenuBar menuBar;
     private JMenu systemMenu;
     private JMenuItem registerMenu,saveMenuItem, changeMenuItem, removeMenuItem;
 
-    private JTextField idField,nomeField, tipoField, danoField, custoManaField; //TODO o field tipo
+    private JTextField idField,nomeField, danoField,tipoField, custoManaField;
+    private JComboBox<TipoElementar> tipoElementarComboBox;
 
+    private JScrollPane painelScroll;
+    private JScrollBar barraScroll;
+    private JSpinner spinner;
+
+    private JRadioButton botaoSelec;
 
     //private JTextPane textPanel;
     private final ImageIcon miniIcon = new ImageIcon("C:\\Users\\bezer\\IdeaProjects\\SistemaArsenalMagicoRPG\\src\\main\\resources\\icons\\miniatura.png");
@@ -250,6 +256,10 @@ public class MainFrame {
     }
     private void actionFrameRemover(){
         this.actionFrame.setTitle("Remover Magia");
+        this.painelScroll = new JScrollPane();
+        painelScroll.setLayout(new ScrollPaneLayout());
+        this.barraScroll = new JScrollBar();
+        painelScroll.add(barraScroll);
 
 
         gbc.gridx = 0;
@@ -265,11 +275,9 @@ public class MainFrame {
 
         actionLabel.add(voltarButton, gbc);
 
-        JScrollPane painelRemover = new JScrollPane();
-        painelRemover.setLayout(new ScrollPaneLayout());
-        painelRemover.add(actionLabel, gbc);
+        painelScroll.add(actionLabel);
 
-        actionFrame.add(painelRemover);
+        actionFrame.add(painelScroll, gbc);
     }
     private void userMessageSystem(String title,String message){
         messageFrame.setTitle(title);
@@ -303,29 +311,28 @@ public class MainFrame {
         */
         messageLabel = new JLabel(); //botar um background depois
         messageLabel.setLayout(new GridBagLayout());
-        GridBagConstraints gbcMes = new GridBagConstraints();
-        gbcMes.insets = new Insets(20,5,20,5);
+        gbc.insets = new Insets(20,5,20,5);
 
         JButton okButton = new JButton("OK");
         okButton.addActionListener(okal -> {
             messageFrame.setVisible(false);
         });
-        gbcMes.anchor = GridBagConstraints.SOUTH;
-        gbcMes.gridx = 0;
-        gbcMes.gridy = 2;
-        gbcMes.gridwidth = 2;
-        messageFrame.add(okButton, gbcMes);
+        gbc.anchor = GridBagConstraints.SOUTH;
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.gridwidth = 2;
+        messageFrame.add(okButton, gbc);
         //TODO essa função de quando apertar o enter ele já entender como OK!
         //okButton.setMnemonic(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_MASK).getKeyChar());
 
         //messageLabel.setHorizontalTextPosition(GridBagConstraints.CENTER);
-        gbcMes.gridx = 0;
-        gbcMes.gridy = 1;
-        gbcMes.gridwidth = 2;
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 2;
         messageLabel.setFont(new Font("sans-serif", Font.BOLD, 18));
-        messagePanel.add(messageLabel, gbcMes);
-        gbcMes.anchor = GridBagConstraints.CENTER;
-        messageFrame.add(messagePanel, gbcMes);
+        messagePanel.add(messageLabel, gbc);
+        gbc.anchor = GridBagConstraints.CENTER;
+        messageFrame.add(messagePanel, gbc);
     }
     private void messageFrameBasicShow(){
         this.messageFrame.setVisible(true);
