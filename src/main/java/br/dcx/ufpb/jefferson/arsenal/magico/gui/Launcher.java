@@ -1,14 +1,13 @@
 package br.dcx.ufpb.jefferson.arsenal.magico.gui;
 
+import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
 
 public class Launcher {
     public static void main(String [] args){
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                /**
                 for(UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()){
                     if("Nimbus".equals(info.getName())){
                         try {
@@ -25,14 +24,8 @@ public class Launcher {
                         break;
                     }
                 }
-                 */
-                MainFrame frame = null;
-                try {
-                    frame = new MainFrame();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                frame.showMain();
+                ArsenalManager frame = new ArsenalManager();
+                frame.showMainScreen();
             }
         });
     }

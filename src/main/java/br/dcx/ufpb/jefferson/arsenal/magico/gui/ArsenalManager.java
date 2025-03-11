@@ -4,23 +4,21 @@ import br.dcx.ufpb.jefferson.arsenal.magico.ArsenalMagico;
 import br.dcx.ufpb.jefferson.arsenal.magico.MagiaJaExisteException;
 import br.dcx.ufpb.jefferson.arsenal.magico.SistemaArsenalMagico;
 import br.dcx.ufpb.jefferson.arsenal.magico.TipoElementar;
-import org.jetbrains.annotations.NotNull;
 
 import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 
-public class MainFrame {
-    private JFrame frame,actionFrame,messageFrame;
-    private JPanel panel,actionPanel,messagePanel;
-    private JLabel label, actionLabel,messageLabel;
+public class ArsenalManager {
+    private JFrame mainFrame,actionFrame,messageFrame;
+    private JPanel mainPanel,actionPanel,messagePanel;
+    private JLabel backGroundMainLabel, actionLabel,messageLabel;
 
-    private JMenuBar menuBar;
+    private JMenuBar mainMenuBar;
     private JMenu systemMenu;
     private JMenuItem registerMenu,saveMenuItem, changeMenuItem, removeMenuItem;
 
@@ -39,35 +37,35 @@ public class MainFrame {
     private final ImageIcon backGroundDesfocado = new ImageIcon("src/main/resources/icons/backGroundDefocado.png");
     private final GridBagConstraints gbc = new GridBagConstraints();;
 
-    private ArsenalMagico system  = new SistemaArsenalMagico();
+    private ArsenalMagico magicSystem = new SistemaArsenalMagico();
 
-    public MainFrame() throws IOException {
-        initialize();
+    public ArsenalManager() {
+        initializeMainFrame();
     }
 
-    public void initialize() throws IOException {
-        messageFrameBasic(); //frame com painel basico padrão para mensagens do sistema
-        actionFrameBasic(); //frane com painel basico padrão para outras janelas sem ser a principal
+    public void initializeMainFrame()  {
+        buildMessageFrame(); //mainFrame com painel basico padrão para mensagens do sistema
+        buildActionFrame(); //frane com painel basico padrão para outras janelas sem ser a principal
 
 
-        this.frame = new JFrame("Seu Arsenal Mágico");
+        this.mainFrame = new JFrame("Seu Arsenal Mágico");
         Font fontPadrao = new Font(Font.DIALOG_INPUT, Font.BOLD, 16);
-        Color corDaBarra = frame.getForeground();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(backGround.getIconWidth(),backGround.getIconHeight());
-        frame.setResizable(false);
-        frame.setFont(fontPadrao);
-        frame.setLocationRelativeTo(null);
-        frame.setLayout(new GridBagLayout());
-        frame.setIconImage(miniIcon.getImage());
+        Color corDaBarra = mainFrame.getForeground();
+        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        mainFrame.setSize(backGround.getIconWidth(),backGround.getIconHeight());
+        mainFrame.setResizable(false);
+        mainFrame.setFont(fontPadrao);
+        mainFrame.setLocationRelativeTo(null);
+        mainFrame.setLayout(new GridBagLayout());
+        mainFrame.setIconImage(miniIcon.getImage());
 
         { //Barra de menu
             UIManager.put("Menu.font",fontPadrao); //font da barra e do menu
             UIManager.put("MenuItem.font",fontPadrao);
             //UIManager.setLookAndFeel(NimbusLookAndFeel);
 
-            this.menuBar = new JMenuBar();
-            menuBar.setToolTipText("Menu do sistema");
+            this.mainMenuBar = new JMenuBar();
+            mainMenuBar.setToolTipText("Menu do sistema");
             //Talvez mudar a tooltip de alguma forma
 
             this.systemMenu = new JMenu("Sistema");
@@ -83,26 +81,26 @@ public class MainFrame {
                 saveMenuItem.addActionListener(al -> {
                     reproduzirSom();
                     System.out.println("Salvou confia");
-                    //system.gravarDados();
+                    //magicSystem.gravarDados();
                 });
 
 
                 this.registerMenu = new JMenuItem("Cadastrar");
                 registerMenu.addActionListener(ral -> {
-                    actionFrameCadastro();
-                    actionFrameBasicShow();
+                    rebuildActionFrameForCadastro();
+                    this.actionFrame.setVisible(true);
                     this.hideMain();
                 });
                 this.changeMenuItem = new JMenuItem("Alterar");
                 changeMenuItem.addActionListener(cal -> {
-                    actionFrameAlterar();
-                    actionFrameBasicShow();
+                    rebuildActionFrameForAlteracao();
+                    this.actionFrame.setVisible(true);
                     this.hideMain();
                 });
                 this.removeMenuItem = new JMenuItem("Remover");
                 removeMenuItem.addActionListener(ral -> {
-                    actionFrameRemover();
-                    actionFrameBasicShow();
+                    rebuildActionFrameForRemocao();
+                    this.actionFrame.setVisible(true);
                     this.hideMain();
                 });
             systemMenu.add(registerMenu);
@@ -110,11 +108,11 @@ public class MainFrame {
             systemMenu.add(removeMenuItem);
             systemMenu.add(saveMenuItem);
 
-            menuBar.add(systemMenu);
+            mainMenuBar.add(systemMenu);
         }
-        this.panel = new JPanel(new GridBagLayout());
-        this.label = new JLabel(backGround);
-        label.setLayout(new GridBagLayout());
+        this.mainPanel = new JPanel(new GridBagLayout());
+        this.backGroundMainLabel = new JLabel(backGround);
+        backGroundMainLabel.setLayout(new GridBagLayout());
 
         gbc.insets = new Insets(0,0,0,0); //top,left,botton,right - isso é a distancia de cima,esquerda,baixo e direita do componente com o grid do container
         //gbc.ipady = 0; //esses 3 juntos
@@ -127,45 +125,54 @@ public class MainFrame {
         gbc.weightx = 1.0; // se for 1 gruda na direcao da ancora
         //gbc.gridheight = 0;
         //gbc.gridwidth = 0;
-        this.label.add(menuBar, gbc);
+        this.backGroundMainLabel.add(mainMenuBar, gbc);
         gbc.anchor = GridBagConstraints.CENTER;
-        this.panel.add(this.label);
+        this.mainPanel.add(this.backGroundMainLabel);
         gbc.anchor = GridBagConstraints.CENTER;
-        this.frame.add(this.panel, gbc);
+        this.mainFrame.add(this.mainPanel, gbc);
     }
-    private void actionFrameBasic(){
+    private void buildActionFrame(){
         this.actionFrame = new JFrame();
         actionFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         /**
         if(actionFrame.getDefaultCloseOperation() == JFrame.EXIT_ON_CLOSE){ //tentatinha de fazer voltar para o main quando apertar no X
-            this.showMain();
+            this.showMainScreen();
         }
         Dimension screanSize = Toolkit.getDefaultToolkit().getScreenSize();
          */
         actionFrame.setSize(backGroundDesfocado.getIconWidth(),backGroundDesfocado.getIconHeight());
         actionFrame.setLocationRelativeTo(null);
-        actionFrame.setResizable(false);
+        actionFrame.setResizable(true);
         actionFrame.setIconImage(miniIcon.getImage());
         actionFrame.setLayout(new GridBagLayout());
 
-        this.actionPanel = new JPanel(new GridBagLayout());
         this.actionLabel = new JLabel(backGroundDesfocado);
         actionLabel.setLayout(new GridBagLayout());
         //actionLabel.setBorder(BorderFactory.createRaisedBevelBorder());
     }
-    private void actionFrameBasicShow(){
-        this.actionFrame.setVisible(true);
-    }
-    private void actionFrameCadastro(){
+
+    private void rebuildActionFrameForCadastro(){
         this.actionFrame.setTitle("Cadastrar Magia");
         GridBagConstraints gbcCad = new GridBagConstraints();
         gbcCad.insets = new Insets(5,5,5,5);
         gbcCad.anchor = GridBagConstraints.EAST; //para ficar colado na barra de busca
-        idField = adicionarCampo(actionLabel, gbcCad, "ID:",0);
-        nomeField = adicionarCampo(actionLabel, gbcCad,"Nome:", 1);
-        tipoField = adicionarCampo(actionLabel, gbcCad,"Tipo elementar:",2);
-        danoField = adicionarCampo(actionLabel, gbcCad,"Dano:",3);
-        custoManaField = adicionarCampo(actionLabel, gbcCad,"Custo de mana:",4);
+        idField = adicionarCampoAoActionFrame(gbcCad, "ID:",0);
+        nomeField = adicionarCampoAoActionFrame(gbcCad,"Nome:", 1);
+        JLabel label2 = new JLabel("Tipo elementar:");
+        label2.setFont(new Font("sans-serif", Font.BOLD, 16));
+        label2.setForeground(new Color(0xFFFFFF));
+        gbcCad.gridx = 0;
+        gbcCad.gridy = 2;
+        actionLabel.add(label2, gbcCad);
+        tipoElementarComboBox = new JComboBox<>(TipoElementar.values());
+        tipoElementarComboBox.setSize(50,20);
+        gbcCad.gridx = 1;
+        gbcCad.gridy = 2;
+        gbcCad.anchor = GridBagConstraints.WEST;
+        actionLabel.add(tipoElementarComboBox,gbcCad);
+        gbcCad.anchor = GridBagConstraints.EAST;
+        danoField = adicionarCampoAoActionFrame(gbcCad,"Dano:",3);
+        custoManaField = adicionarCampoAoActionFrame(gbcCad,"Custo de mana:",4);
 
         gbcCad.gridx = 0;
         gbcCad.gridy = 5;
@@ -173,7 +180,7 @@ public class MainFrame {
         gbcCad.anchor = GridBagConstraints.CENTER; //centralizar botão
         JButton cadastrarButton = new JButton("Cadastrar"); //TODO: adicionar um jeito de quando apertar enter ele vai apertar o botao
         cadastrarButton.addActionListener(cal -> {
-            cadastrar();
+            cadastrarMagia();
         });
         actionLabel.add(cadastrarButton, gbcCad);
 
@@ -183,52 +190,52 @@ public class MainFrame {
         gbcCad.anchor = GridBagConstraints.CENTER;
         JButton voltarButton = new JButton("Voltar");
         voltarButton.addActionListener(val -> {
-            this.showMain();
+            this.showMainScreen();
             this.actionFrame.setVisible(false);
         });
         actionLabel.add(voltarButton, gbcCad);
         gbcCad.anchor = GridBagConstraints.CENTER;
         gbcCad.gridy = 1;
         gbcCad.gridx = 1;
-        actionPanel.add(actionLabel, gbcCad);
+        //actionPanel.add(actionLabel, gbcCad);
         gbcCad.anchor = GridBagConstraints.CENTER;
-        actionFrame.add(actionPanel,gbcCad);
+        actionFrame.add(actionLabel,gbcCad);
     }
-    private static @NotNull JTextField adicionarCampo(@NotNull JLabel labelFundoPadrao, @NotNull GridBagConstraints gbcM, String labelText, int linha){
+    private JTextField adicionarCampoAoActionFrame(GridBagConstraints gbcM, String labelText, int linha){
         JLabel label2 = new JLabel(labelText);
         label2.setFont(new Font("sans-serif", Font.BOLD, 16));
         label2.setForeground(new Color(0xFFFFFF));
         gbcM.gridx = 0;
         gbcM.gridy = linha;
-        labelFundoPadrao.add(label2, gbcM);
+        actionLabel.add(label2, gbcM);
 
         JTextField field = new JTextField(20);
         gbcM.gridx = 1;
         gbcM.gridy = linha;
-        labelFundoPadrao.add(field, gbcM);
+        actionLabel.add(field, gbcM);
 
         return field;
     }
-    private void cadastrar() throws MagiaJaExisteException {
+    private void cadastrarMagia() throws MagiaJaExisteException {
         try {
             Integer id = Integer.parseInt(idField.getText());
             String nome = nomeField.getText();
             assert !nome.isBlank() || !nome.isEmpty();
-            TipoElementar tipo = TipoElementar.FOGO; //TODO mudar para algo que possa ser selecionado
+            TipoElementar tipo = (TipoElementar) tipoElementarComboBox.getSelectedItem(); //TODO mudar para algo que possa ser selecionado
             Double dano = Double.parseDouble(danoField.getText());
             int custoMana = Integer.parseInt(custoManaField.getText());
-            system.cadastrarMagia(id,nome, tipo, dano, custoMana);
-            userMessageSystem("Mensagem do sistema", "Magia cadastrada com sucesso!");
+            magicSystem.cadastrarMagia(id,nome, tipo, dano, custoMana);
+            showMessage("Mensagem do sistema", "Magia cadastrada com sucesso!");
             idField.setText("");
             nomeField.setText("");
             //tipo
             danoField.setText("");
             custoManaField.setText("");
         } catch (NumberFormatException e){
-            userMessageSystem("Mesangem de erro", "Insira um número válido");
+            showMessage("Mesangem de erro", "Insira um número válido");
         }
     }
-    private void actionFrameAlterar(){
+    private void rebuildActionFrameForAlteracao(){
         actionFrame.setTitle("Alterar Magia");
 
         actionLabel.removeAll();
@@ -243,7 +250,7 @@ public class MainFrame {
         gbc.anchor = GridBagConstraints.CENTER;
         JButton voltarButton = new JButton("Voltar");
         voltarButton.addActionListener(val -> {
-            this.showMain();
+            this.showMainScreen();
             this.actionFrame.setVisible(false);
         });
         actionLabel.add(voltarButton, gbc);
@@ -252,7 +259,7 @@ public class MainFrame {
 
         actionFrame.add(actionPanel);
     }
-    private void actionFrameRemover(){
+    private void rebuildActionFrameForRemocao(){
         this.actionFrame.setTitle("Remover Magia");
         this.painelScroll = new JScrollPane();
         painelScroll.setLayout(new ScrollPaneLayout());
@@ -266,7 +273,7 @@ public class MainFrame {
         gbc.anchor = GridBagConstraints.CENTER;
         JButton voltarButton = new JButton("Voltar");
         voltarButton.addActionListener(val -> {
-            this.showMain();
+            this.showMainScreen();
             this.actionFrame.setVisible(false);
         });
         actionLabel.add(voltarButton, gbc);
@@ -277,12 +284,12 @@ public class MainFrame {
 
         actionFrame.add(painelScroll, gbc);
     }
-    private void userMessageSystem(String title,String message){
+    private void showMessage(String title, String message){
         messageFrame.setTitle(title);
         messageLabel.setText(message);
-        messageFrameBasicShow();
+        this.messageFrame.setVisible(true);
     }
-    private void messageFrameBasic(){ //Frame padrão para mensagens do sistema
+    private void buildMessageFrame(){ //Frame padrão para mensagens do sistema
         this.messageFrame = new JFrame();
         messageFrame.setSize(300,200);
         messageFrame.setLocationRelativeTo(null);
@@ -290,7 +297,7 @@ public class MainFrame {
         messageFrame.setLayout(new GridBagLayout());
         messageFrame.setResizable(false);
         messageFrame.setIconImage(miniIcon.getImage());
-        //talvez fazer um label para colocar uma imagem de fundo
+        //talvez fazer um backGroundMainLabel para colocar uma imagem de fundo
 
         messagePanel = new JPanel();
         messagePanel.setLayout(new GridBagLayout());
@@ -332,29 +339,23 @@ public class MainFrame {
         gbc.anchor = GridBagConstraints.CENTER;
         messageFrame.add(messagePanel, gbc);
     }
-    private void messageFrameBasicShow(){
-        this.messageFrame.setVisible(true);
-    }
+
     private static void reproduzirSom() {
         try {
-            // Carrega o arquivo de som
-            File arquivoDeSom = new File("C:\\Users\\bezer\\IdeaProjects\\SistemaArsenalMagicoRPG\\src\\main\\resources\\sounds\\plimv2.wav");
+            File arquivoDeSom = new File("src/main/resources/sounds/plimv2.wav");
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(arquivoDeSom);
 
-            // Obtém um Clip para reproduzir o som
             Clip clip = AudioSystem.getClip();
             clip.open(audioInputStream);
-
-            // Reproduz o som
             clip.start();
         } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
             System.err.println("Erro ao reproduzir o som: " + e.getMessage());
         }
     }
-    public void showMain(){
-        this.frame.setVisible(true);
+    public void showMainScreen(){
+        this.mainFrame.setVisible(true);
     }
     private void hideMain(){
-        this.frame.setVisible(false);
+        this.mainFrame.setVisible(false);
     }
 }
