@@ -34,10 +34,10 @@ public class MainFrame {
     private JRadioButton botaoSelec;
 
     //private JTextPane textPanel;
-    private final ImageIcon miniIcon = new ImageIcon("C:\\Users\\bezer\\IdeaProjects\\SistemaArsenalMagicoRPG\\src\\main\\resources\\icons\\miniatura.png");
-    private final ImageIcon backGround = new ImageIcon("C:\\Users\\bezer\\IdeaProjects\\SistemaArsenalMagicoRPG\\src\\main\\resources\\icons\\backGroundMain.png");
-    private final ImageIcon backGroundDesfocado = new ImageIcon("C:\\Users\\bezer\\IdeaProjects\\SistemaArsenalMagicoRPG\\src\\main\\resources\\icons\\backGroundDefocado.png");
-    private GridBagConstraints gbc = new GridBagConstraints();;
+    private final ImageIcon miniIcon = new ImageIcon("src/main/resources/icons/miniatura.png");
+    private final ImageIcon backGround = new ImageIcon("src/main/resources/icons/backGroundMain.png");
+    private final ImageIcon backGroundDesfocado = new ImageIcon("src/main/resources/icons/backGroundDefocado.png");
+    private final GridBagConstraints gbc = new GridBagConstraints();;
 
     private ArsenalMagico system  = new SistemaArsenalMagico();
 
@@ -169,19 +169,17 @@ public class MainFrame {
 
         gbcCad.gridx = 0;
         gbcCad.gridy = 5;
-        gbcCad.gridwidth = 0; //ocupa duas colunas
+        gbcCad.gridwidth = 0; //ocupa coluna da direita
         gbcCad.anchor = GridBagConstraints.CENTER; //centralizar botão
         JButton cadastrarButton = new JButton("Cadastrar"); //TODO: adicionar um jeito de quando apertar enter ele vai apertar o botao
-        cadastrarButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                cadastrar();
-            }
+        cadastrarButton.addActionListener(cal -> {
+            cadastrar();
         });
         actionLabel.add(cadastrarButton, gbcCad);
+
         gbcCad.gridx = 0;
         gbcCad.gridy = 5;
-        gbcCad.gridwidth = 1; //ocupa duas colunas
+        gbcCad.gridwidth = 1; //ocupa coluna da esquerda
         gbcCad.anchor = GridBagConstraints.CENTER;
         JButton voltarButton = new JButton("Voltar");
         voltarButton.addActionListener(val -> {
