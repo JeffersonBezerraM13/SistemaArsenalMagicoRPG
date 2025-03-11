@@ -75,7 +75,7 @@ public class MainFrame {
                 this.saveMenuItem = new JMenuItem("Salvar");
                 saveMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
                 saveMenuItem.addActionListener(al -> {
-                    reproduzirSom("C:\\Users\\bezer\\IdeaProjects\\SistemaArsenalMagicoRPG\\src\\main\\resources\\sounds\\plimv2.wav");
+                    reproduzirSom();
                     System.out.println("Salvou confia");
                     //system.gravarDados();
                 });
@@ -214,6 +214,12 @@ public class MainFrame {
             Double dano = Double.parseDouble(danoField.getText());
             int custoMana = Integer.parseInt(custoManaField.getText());
             system.cadastrarMagia(id,nome, tipo, dano, custoMana);
+            userMessageSystem("Mensagem do sistema", "Magia cadastrada com sucesso!");
+            idField.setText("");
+            nomeField.setText("");
+            //tipo
+            danoField.setText("");
+            custoManaField.setText("");
         } catch (NumberFormatException e){
             userMessageSystem("Mesangem de erro", "Insira um número válido");
         }
@@ -278,45 +284,56 @@ public class MainFrame {
         messageFrame.setLayout(new GridBagLayout());
         messageFrame.setResizable(false);
         messageFrame.setIconImage(miniIcon.getImage());
+        //talvez fazer um label para colocar uma imagem de fundo
 
-        JPanel painel = new JPanel();
-        painel.setLayout(new BorderLayout());
-        //Border emptyBorder = BorderFactory.createEmptyBorder(10, 10, 10, 10); // Topo, esquerda, baixo, direita
-        //Border lineBorder = BorderFactory.createLineBorder(Color.RED, 2); // Cor e espessura
+        messagePanel = new JPanel();
+        messagePanel.setLayout(new GridBagLayout());
+        /**
+        Border emptyBorder = BorderFactory.createEmptyBorder(10, 10, 10, 10); // Topo, esquerda, baixo, direita
+        Border lineBorder = BorderFactory.createLineBorder(Color.RED, 2); // Cor e espessura
         Border raisedBorder = BorderFactory.createRaisedBevelBorder(); // Relevo LINDO ESSE
-        //Border loweredBorder = BorderFactory.createLoweredBevelBorder(); // Rebaixado
+        Border loweredBorder = BorderFactory.createLoweredBevelBorder(); // Rebaixado
         Border titledBorder = BorderFactory.createTitledBorder("Mensagem do Sistema"); //LEGAL
-        //Border outerBorder = BorderFactory.createLineBorder(Color.BLUE, 2); //azul
-        //Border innerBorder = BorderFactory.createEmptyBorder(5, 5, 5, 5);
+        Border outerBorder = BorderFactory.createLineBorder(Color.BLUE, 2); //azul
+        Border innerBorder = BorderFactory.createEmptyBorder(5, 5, 5, 5);
         Border compoundBorder = BorderFactory.createCompoundBorder(raisedBorder, titledBorder); //Mesclando varias bordas
-        //Border matteBorder = BorderFactory.createMatteBorder(1, 1, 1, 1, Color.GREEN); // Topo, esquerda, baixo, direita, cor
-        //Border etchedBorder = BorderFactory.createEtchedBorder(); // Efeito de gravura
-        painel.setBorder(compoundBorder);
+        Border matteBorder = BorderFactory.createMatteBorder(1, 1, 1, 1, Color.GREEN); // Topo, esquerda, baixo, direita, cor
+        Border etchedBorder = BorderFactory.createEtchedBorder(); // Efeito de gravura
+        messagePainel.setBorder(compoundBorder);
+        */
+        messageLabel = new JLabel(); //botar um background depois
+        messageLabel.setLayout(new GridBagLayout());
+        GridBagConstraints gbcMes = new GridBagConstraints();
+        gbcMes.insets = new Insets(20,5,20,5);
 
         JButton okButton = new JButton("OK");
         okButton.addActionListener(okal -> {
             messageFrame.setVisible(false);
         });
-        gbc.anchor = GridBagConstraints.SOUTH;
-        messageFrame.add(okButton, gbc);
+        gbcMes.anchor = GridBagConstraints.SOUTH;
+        gbcMes.gridx = 0;
+        gbcMes.gridy = 2;
+        gbcMes.gridwidth = 2;
+        messageFrame.add(okButton, gbcMes);
         //TODO essa função de quando apertar o enter ele já entender como OK!
         //okButton.setMnemonic(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_MASK).getKeyChar());
 
-        this.messageLabel = new JLabel();
-        messageLabel.setHorizontalTextPosition(SwingConstants.CENTER);
-        messageLabel.setVerticalTextPosition(SwingConstants.CENTER);
+        //messageLabel.setHorizontalTextPosition(GridBagConstraints.CENTER);
+        gbcMes.gridx = 0;
+        gbcMes.gridy = 1;
+        gbcMes.gridwidth = 2;
         messageLabel.setFont(new Font("sans-serif", Font.BOLD, 18));
-        painel.add(messageLabel, BorderLayout.CENTER);
-        painel.add(okButton, BorderLayout.LINE_END); //Queria deixar ele mais no centro e embaixo
-        messageFrame.add(painel);
+        messagePanel.add(messageLabel, gbcMes);
+        gbcMes.anchor = GridBagConstraints.CENTER;
+        messageFrame.add(messagePanel, gbcMes);
     }
     private void messageFrameBasicShow(){
         this.messageFrame.setVisible(true);
     }
-    private static void reproduzirSom(String caminhoDoSom) {
+    private static void reproduzirSom() {
         try {
             // Carrega o arquivo de som
-            File arquivoDeSom = new File(caminhoDoSom);
+            File arquivoDeSom = new File("C:\\Users\\bezer\\IdeaProjects\\SistemaArsenalMagicoRPG\\src\\main\\resources\\sounds\\plimv2.wav");
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(arquivoDeSom);
 
             // Obtém um Clip para reproduzir o som
