@@ -8,6 +8,7 @@ import br.dcx.ufpb.jefferson.arsenal.magico.system.SistemaArsenalMagico;
 
 import javax.sound.sampled.*;
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -22,16 +23,12 @@ public class ArsenalManager {
     private JMenu systemMenu;
     private JMenuItem registerMenu,saveMenuItem, changeMenuItem, removeMenuItem;
 
-    private JTextField idField,nomeField, danoField,tipoField, custoManaField;
+    private JTextField idField,nomeField, danoField, custoManaField;
     private JComboBox<TipoElementar> tipoElementarComboBox;
 
-    private JScrollPane painelScroll;
-    private JScrollBar barraScroll;
-    private JSpinner spinner;
+    private JTable magicTable;
+    private DefaultTableModel tableModel;
 
-    private JRadioButton botaoSelec;
-
-    //private JTextPane textPanel;
     private final ImageIcon miniIcon = new ImageIcon("src/main/resources/icons/miniatura.png");
     private final ImageIcon backGround = new ImageIcon("src/main/resources/icons/backGroundMain.png");
     private final ImageIcon backGroundDesfocado = new ImageIcon("src/main/resources/icons/backGroundDefocado.png");
@@ -44,8 +41,13 @@ public class ArsenalManager {
     }
 
     public void initializeMainFrame()  {
+        try {
+            magicSystem.recuperarDados();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         buildMessageFrame(); //mainFrame com painel basico padrão para mensagens do sistema
-        buildActionFrame(); //frane com painel basico padrão para outras janelas sem ser a principal
+        // frane com painel basico padrão para outras janelas sem ser a principal
 
 
         this.mainFrame = new JFrame("Seu Arsenal Mágico");
@@ -79,8 +81,7 @@ public class ArsenalManager {
                 this.saveMenuItem = new JMenuItem("Salvar");
                 saveMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
                 saveMenuItem.addActionListener(al -> {
-                    //reproduzirSom();
-                    System.out.println("Salvou confia");
+                    reproduzirSom();
                     try {
                         magicSystem.gravarDados();
                     } catch (IOException e) {
@@ -91,20 +92,20 @@ public class ArsenalManager {
 
                 this.registerMenu = new JMenuItem("Cadastrar");
                 registerMenu.addActionListener(ral -> {
-                    rebuildActionFrameForCadastro();
+                    buildActionFrameForCadastro();
                     this.actionFrame.setVisible(true);
                     this.hideMain();
                 });
                 this.changeMenuItem = new JMenuItem("Alterar");
                 changeMenuItem.addActionListener(cal -> {
-                    rebuildActionFrameForAlteracao();
+                    buildActionFrameForAlteracao();
                     this.actionFrame.setVisible(true);
                     this.hideMain();
                 });
                 this.removeMenuItem = new JMenuItem("Remover");
                 removeMenuItem.addActionListener(ral -> {
-                    rebuildActionFrameForRemocao();
-                    this.actionFrame.setVisible(true);
+                    buildActionFrameForRemocao();
+                    actionFrame.setVisible(true);
                     this.hideMain();
                 });
             systemMenu.add(registerMenu);
@@ -135,15 +136,10 @@ public class ArsenalManager {
         gbc.anchor = GridBagConstraints.CENTER;
         this.mainFrame.add(this.mainPanel, gbc);
     }
-    private void buildActionFrame(){
-        this.actionFrame = new JFrame();
+
+    private void buildActionFrameForCadastro(){
+        this.actionFrame =  new JFrame("Cadastrar Magia");
         actionFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        /**
-        if(actionFrame.getDefaultCloseOperation() == JFrame.EXIT_ON_CLOSE){ //tentatinha de fazer voltar para o main quando apertar no X
-            this.showMainScreen();
-        }
-        Dimension screanSize = Toolkit.getDefaultToolkit().getScreenSize();
-         */
         actionFrame.setSize(backGroundDesfocado.getIconWidth(),backGroundDesfocado.getIconHeight());
         actionFrame.setLocationRelativeTo(null);
         actionFrame.setResizable(true);
@@ -152,11 +148,10 @@ public class ArsenalManager {
 
         this.backGroundActionLabel = new JLabel(backGroundDesfocado);
         backGroundActionLabel.setLayout(new GridBagLayout());
-        //backGroundActionLabel.setBorder(BorderFactory.createRaisedBevelBorder());
-    }
 
-    private void rebuildActionFrameForCadastro(){
-        this.actionFrame.setTitle("Cadastrar Magia");
+
+
+
         GridBagConstraints gbcCad = new GridBagConstraints();
         gbcCad.insets = new Insets(5,5,5,5);
         gbcCad.anchor = GridBagConstraints.EAST; //para ficar colado na barra de busca
@@ -239,58 +234,169 @@ public class ArsenalManager {
             showMessage("Mesangem de erro", "Insira um número válido");
         }
     }
-    private void rebuildActionFrameForAlteracao(){
-        actionFrame.setTitle("Alterar Magia");
+    private void buildActionFrameForAlteracao(){
+        this.actionFrame = new JFrame("Alterar Magia");
+        actionFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        actionFrame.setSize(backGroundDesfocado.getIconWidth(),backGroundDesfocado.getIconHeight());
+        actionFrame.setLocationRelativeTo(null);
+        actionFrame.setResizable(true);
+        actionFrame.setIconImage(miniIcon.getImage());
 
-        backGroundActionLabel.removeAll();
+        this.tableModel = new DefaultTableModel() { //cria o modelo da tabela
+            @Override
+            public boolean isCellEditable(int row, int column){
+                return false; //nenhum é editavel
+            }
 
+        };
+        //adiciona as colunas ao modelo
+        tableModel.addColumn("ID");
+        tableModel.addColumn("Nome");
+        tableModel.addColumn("Tipo");
+        tableModel.addColumn("Dano");
+        tableModel.addColumn("Custo");
+        for(Magia m: magicSystem.todasAsMagias()){ //adicionando todas as magias na tabela
 
-
-
-
-        gbc.gridx = 0;
-        gbc.gridy = 5;
-        gbc.gridwidth = 1; //ocupa duas colunas
-        gbc.anchor = GridBagConstraints.CENTER;
-        JButton voltarButton = new JButton("Voltar");
-        voltarButton.addActionListener(val -> {
-            this.showMainScreen();
-            this.actionFrame.setVisible(false);
-        });
-        backGroundActionLabel.add(voltarButton, gbc);
-
-        //actionPanel.add(backGroundActionLabel, gbc);
-
-        //actionFrame.add(actionPanel);
-    }
-    private void rebuildActionFrameForRemocao(){
-        this.actionFrame.setTitle("Remover Magia");
-        this.painelScroll = new JScrollPane();
-        painelScroll.setLayout(new ScrollPaneLayout());
-        this.barraScroll = new JScrollBar();
-        painelScroll.add(barraScroll);
-
-        String strTodasAsMagias = "";
-        for(Magia m: magicSystem.todasAsMagias()){
-            strTodasAsMagias += m.toString()+"\n";
+            tableModel.addRow(new Object[]{
+                    m.getId(),
+                    m.getNome(),
+                    m.getTipo().getValor(),
+                    m.getDano(),
+                    m.getCustoDeMana()
+            });
         }
-        JOptionPane.showMessageDialog(actionFrame,strTodasAsMagias);
-        gbc.gridx = 0;
-        gbc.gridy = 5;
-        gbc.gridwidth = 1; //ocupa duas colunas
-        gbc.anchor = GridBagConstraints.CENTER;
+        //config do modelo
+        magicTable = new JTable(tableModel);
+        magicTable.getColumnModel().getColumn(0).setPreferredWidth(15); //largura da coluna do check box
+        magicTable.getColumnModel().getColumn(1).setPreferredWidth(10);
+        magicTable.setSize(backGroundDesfocado.getIconWidth(),backGroundDesfocado.getIconHeight());
+        magicTable.setPreferredScrollableViewportSize(new Dimension(backGroundDesfocado.getIconWidth(),backGroundDesfocado.getIconHeight()));
+
+        //adiciona a tebala a um jscrollpane que para permitir a rolagem
+        JScrollPane scrollPane = new JScrollPane(magicTable);
+        actionFrame.add(scrollPane,BorderLayout.CENTER);
+
+        //botao para remover todas as magias
+        JButton botaoSelecionar = new JButton("Selecionar Magia");
+        botaoSelecionar.addActionListener(alal -> {
+            int linhaSelecionada = magicTable.getSelectedRow();
+            boolean magiasNaoForamSelecionas = false;
+            for(int linha = 0; linha < tableModel.getRowCount(); linha++){
+                if (tableModel.getValueAt(linha, 0).equals(true)) {
+                    magiasNaoForamSelecionas = false;
+                    magicSystem.removerMagia((Integer)tableModel.getValueAt(linha,1));
+                } else {
+                    magiasNaoForamSelecionas = true;
+                }
+            }
+            if(magiasNaoForamSelecionas){
+                showMessage("Mensagem do sistema","Não há mágias selecionadas");
+            } else {
+                this.showMainScreen();
+                this.actionFrame.setVisible(false);
+                showMessage("Mensagem do sistema", "Mágias removidas com sucesso!");
+            }
+        });
+        //botoa de voltar
         JButton voltarButton = new JButton("Voltar");
         voltarButton.addActionListener(val -> {
             this.showMainScreen();
             this.actionFrame.setVisible(false);
         });
-        backGroundActionLabel.add(voltarButton, gbc);
+        //painel para botões
+        JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.CENTER)); //no centro do painel
+        painelBotoes.add(voltarButton);
+        painelBotoes.add(botaoSelecionar);
+        actionFrame.add(painelBotoes, BorderLayout.SOUTH); //e o painel está em baixo
 
-        backGroundActionLabel.add(voltarButton, gbc);
 
-        painelScroll.add(backGroundActionLabel);
 
-        actionFrame.add(painelScroll, gbc);
+
+    }
+    private void buildActionFrameForRemocao(){
+        this.actionFrame = new JFrame("Remover Magia");
+        actionFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        actionFrame.setSize(backGroundDesfocado.getIconWidth(),backGroundDesfocado.getIconHeight());
+        actionFrame.setLocationRelativeTo(null);
+        actionFrame.setResizable(true);
+        actionFrame.setIconImage(miniIcon.getImage());
+
+        this.tableModel = new DefaultTableModel() { //cria o modelo da tabela
+            @Override
+            public boolean isCellEditable(int row, int column){
+                return column == 0; //apenas a coluna do checkBox é editavel
+            }
+            @Override
+            public Class<?> getColumnClass(int columnIndex){
+                //define o tipo de dados da coluna do checkBox
+                if(columnIndex == 0){
+                    return Boolean.class;
+                }
+                return String.class;
+            }
+
+        };
+        //adiciona as colunas ao modelo
+        tableModel.addColumn(""); //coluna do check box
+        tableModel.addColumn("ID");
+        tableModel.addColumn("Nome");
+        tableModel.addColumn("Tipo");
+        tableModel.addColumn("Dano");
+        tableModel.addColumn("Custo");
+        for(Magia m: magicSystem.todasAsMagias()){ //adicionando todas as magias na tabela
+
+            tableModel.addRow(new Object[]{
+                    false, //do checkbox
+                    m.getId(),
+                    m.getNome(),
+                    m.getTipo().getValor(),
+                    m.getDano(),
+                    m.getCustoDeMana()
+            });
+        }
+        //config do modelo
+        magicTable = new JTable(tableModel);
+        magicTable.getColumnModel().getColumn(0).setPreferredWidth(15); //largura da coluna do check box
+        magicTable.getColumnModel().getColumn(1).setPreferredWidth(10);
+        magicTable.setSize(backGroundDesfocado.getIconWidth(),backGroundDesfocado.getIconHeight());
+        magicTable.setPreferredScrollableViewportSize(new Dimension(backGroundDesfocado.getIconWidth(),backGroundDesfocado.getIconHeight()));
+
+        //adiciona a tebala a um jscrollpane que para permitir a rolagem
+        JScrollPane scrollPane = new JScrollPane(magicTable);
+        actionFrame.add(scrollPane,BorderLayout.CENTER);
+
+        //botao para remover todas as magias
+        JButton botaoSelecionar = new JButton("Remover mágias");
+        botaoSelecionar.addActionListener(remal -> {
+            boolean magiasNaoForamSelecionas = false;
+            for(int linha = 0; linha < tableModel.getRowCount(); linha++){
+                if (tableModel.getValueAt(linha, 0).equals(true)) {
+                    magiasNaoForamSelecionas = false;
+                    magicSystem.removerMagia((Integer)tableModel.getValueAt(linha,1));
+                } else {
+                    magiasNaoForamSelecionas = true;
+                }
+            }
+            if(magiasNaoForamSelecionas){
+                showMessage("Mensagem do sistema","Não há mágias selecionadas");
+            } else {
+                this.showMainScreen();
+                this.actionFrame.setVisible(false);
+                showMessage("Mensagem do sistema", "Mágias removidas com sucesso!");
+            }
+        });
+        //botoa de voltar
+        JButton voltarButton = new JButton("Voltar");
+        voltarButton.addActionListener(val -> {
+            this.showMainScreen();
+            this.actionFrame.setVisible(false);
+        });
+        //painel para botões
+        JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.CENTER)); //no centro do painel
+        painelBotoes.add(voltarButton);
+        painelBotoes.add(botaoSelecionar);
+        actionFrame.add(painelBotoes, BorderLayout.SOUTH); //e o painel está em baixo
+
     }
     private void showMessage(String title, String message){
         messageFrame.setTitle(title);
