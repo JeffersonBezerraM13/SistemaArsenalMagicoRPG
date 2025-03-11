@@ -1,9 +1,8 @@
-package br.dcx.ufpb.jefferson.arsenal.magico;
+package br.dcx.ufpb.jefferson.arsenal.magico.entities;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.Serializable;
 
-public enum TipoElementar {
+public enum TipoElementar implements Serializable {
     FOGO("Fogo"),
     TERRA("Terra"),
     AGUA("Água"),

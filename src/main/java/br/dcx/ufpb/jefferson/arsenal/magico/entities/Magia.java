@@ -1,7 +1,4 @@
-package br.dcx.ufpb.jefferson.arsenal.magico;
-
-import br.dcx.ufpb.jefferson.arsenal.magico.futuro.EfeitoElementar;
-import br.dcx.ufpb.jefferson.arsenal.magico.futuro.FormaElementar;
+package br.dcx.ufpb.jefferson.arsenal.magico.entities;
 
 import java.io.Serializable;
 import java.util.Objects;

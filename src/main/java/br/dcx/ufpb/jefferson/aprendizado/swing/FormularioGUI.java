@@ -1,6 +1,6 @@
 package br.dcx.ufpb.jefferson.aprendizado.swing;
 
-import br.dcx.ufpb.jefferson.arsenal.magico.ArsenalMagico;
+import br.dcx.ufpb.jefferson.arsenal.magico.system.ArsenalMagico;
 
 import javax.swing.*;
 import java.awt.*;

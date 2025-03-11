@@ -1,9 +1,10 @@
 package br.dcx.ufpb.jefferson.arsenal.magico.gui;
 
-import br.dcx.ufpb.jefferson.arsenal.magico.ArsenalMagico;
-import br.dcx.ufpb.jefferson.arsenal.magico.MagiaJaExisteException;
-import br.dcx.ufpb.jefferson.arsenal.magico.SistemaArsenalMagico;
-import br.dcx.ufpb.jefferson.arsenal.magico.TipoElementar;
+import br.dcx.ufpb.jefferson.arsenal.magico.entities.Magia;
+import br.dcx.ufpb.jefferson.arsenal.magico.entities.TipoElementar;
+import br.dcx.ufpb.jefferson.arsenal.magico.exception.MagiaJaExisteException;
+import br.dcx.ufpb.jefferson.arsenal.magico.system.ArsenalMagico;
+import br.dcx.ufpb.jefferson.arsenal.magico.system.SistemaArsenalMagico;
 
 import javax.sound.sampled.*;
 import javax.swing.*;
@@ -15,9 +16,8 @@ import java.io.IOException;
 
 public class ArsenalManager {
     private JFrame mainFrame,actionFrame,messageFrame;
-    private JPanel mainPanel,actionPanel,messagePanel;
-    private JLabel backGroundMainLabel, actionLabel,messageLabel;
-
+    private JPanel mainPanel,messagePanel;
+    private JLabel backGroundMainLabel, backGroundActionLabel,messageLabel;
     private JMenuBar mainMenuBar;
     private JMenu systemMenu;
     private JMenuItem registerMenu,saveMenuItem, changeMenuItem, removeMenuItem;
@@ -79,9 +79,13 @@ public class ArsenalManager {
                 this.saveMenuItem = new JMenuItem("Salvar");
                 saveMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
                 saveMenuItem.addActionListener(al -> {
-                    reproduzirSom();
+                    //reproduzirSom();
                     System.out.println("Salvou confia");
-                    //magicSystem.gravarDados();
+                    try {
+                        magicSystem.gravarDados();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 });
 
 
@@ -146,9 +150,9 @@ public class ArsenalManager {
         actionFrame.setIconImage(miniIcon.getImage());
         actionFrame.setLayout(new GridBagLayout());
 
-        this.actionLabel = new JLabel(backGroundDesfocado);
-        actionLabel.setLayout(new GridBagLayout());
-        //actionLabel.setBorder(BorderFactory.createRaisedBevelBorder());
+        this.backGroundActionLabel = new JLabel(backGroundDesfocado);
+        backGroundActionLabel.setLayout(new GridBagLayout());
+        //backGroundActionLabel.setBorder(BorderFactory.createRaisedBevelBorder());
     }
 
     private void rebuildActionFrameForCadastro(){
@@ -163,13 +167,13 @@ public class ArsenalManager {
         label2.setForeground(new Color(0xFFFFFF));
         gbcCad.gridx = 0;
         gbcCad.gridy = 2;
-        actionLabel.add(label2, gbcCad);
+        backGroundActionLabel.add(label2, gbcCad);
         tipoElementarComboBox = new JComboBox<>(TipoElementar.values());
         tipoElementarComboBox.setSize(50,20);
         gbcCad.gridx = 1;
         gbcCad.gridy = 2;
         gbcCad.anchor = GridBagConstraints.WEST;
-        actionLabel.add(tipoElementarComboBox,gbcCad);
+        backGroundActionLabel.add(tipoElementarComboBox,gbcCad);
         gbcCad.anchor = GridBagConstraints.EAST;
         danoField = adicionarCampoAoActionFrame(gbcCad,"Dano:",3);
         custoManaField = adicionarCampoAoActionFrame(gbcCad,"Custo de mana:",4);
@@ -182,7 +186,7 @@ public class ArsenalManager {
         cadastrarButton.addActionListener(cal -> {
             cadastrarMagia();
         });
-        actionLabel.add(cadastrarButton, gbcCad);
+        backGroundActionLabel.add(cadastrarButton, gbcCad);
 
         gbcCad.gridx = 0;
         gbcCad.gridy = 5;
@@ -193,13 +197,13 @@ public class ArsenalManager {
             this.showMainScreen();
             this.actionFrame.setVisible(false);
         });
-        actionLabel.add(voltarButton, gbcCad);
+        backGroundActionLabel.add(voltarButton, gbcCad);
         gbcCad.anchor = GridBagConstraints.CENTER;
         gbcCad.gridy = 1;
         gbcCad.gridx = 1;
-        //actionPanel.add(actionLabel, gbcCad);
+        //actionPanel.add(backGroundActionLabel, gbcCad);
         gbcCad.anchor = GridBagConstraints.CENTER;
-        actionFrame.add(actionLabel,gbcCad);
+        actionFrame.add(backGroundActionLabel,gbcCad);
     }
     private JTextField adicionarCampoAoActionFrame(GridBagConstraints gbcM, String labelText, int linha){
         JLabel label2 = new JLabel(labelText);
@@ -207,12 +211,12 @@ public class ArsenalManager {
         label2.setForeground(new Color(0xFFFFFF));
         gbcM.gridx = 0;
         gbcM.gridy = linha;
-        actionLabel.add(label2, gbcM);
+        backGroundActionLabel.add(label2, gbcM);
 
         JTextField field = new JTextField(20);
         gbcM.gridx = 1;
         gbcM.gridy = linha;
-        actionLabel.add(field, gbcM);
+        backGroundActionLabel.add(field, gbcM);
 
         return field;
     }
@@ -238,7 +242,7 @@ public class ArsenalManager {
     private void rebuildActionFrameForAlteracao(){
         actionFrame.setTitle("Alterar Magia");
 
-        actionLabel.removeAll();
+        backGroundActionLabel.removeAll();
 
 
 
@@ -253,11 +257,11 @@ public class ArsenalManager {
             this.showMainScreen();
             this.actionFrame.setVisible(false);
         });
-        actionLabel.add(voltarButton, gbc);
+        backGroundActionLabel.add(voltarButton, gbc);
 
-        actionPanel.add(actionLabel, gbc);
+        //actionPanel.add(backGroundActionLabel, gbc);
 
-        actionFrame.add(actionPanel);
+        //actionFrame.add(actionPanel);
     }
     private void rebuildActionFrameForRemocao(){
         this.actionFrame.setTitle("Remover Magia");
@@ -266,7 +270,11 @@ public class ArsenalManager {
         this.barraScroll = new JScrollBar();
         painelScroll.add(barraScroll);
 
-
+        String strTodasAsMagias = "";
+        for(Magia m: magicSystem.todasAsMagias()){
+            strTodasAsMagias += m.toString()+"\n";
+        }
+        JOptionPane.showMessageDialog(actionFrame,strTodasAsMagias);
         gbc.gridx = 0;
         gbc.gridy = 5;
         gbc.gridwidth = 1; //ocupa duas colunas
@@ -276,11 +284,11 @@ public class ArsenalManager {
             this.showMainScreen();
             this.actionFrame.setVisible(false);
         });
-        actionLabel.add(voltarButton, gbc);
+        backGroundActionLabel.add(voltarButton, gbc);
 
-        actionLabel.add(voltarButton, gbc);
+        backGroundActionLabel.add(voltarButton, gbc);
 
-        painelScroll.add(actionLabel);
+        painelScroll.add(backGroundActionLabel);
 
         actionFrame.add(painelScroll, gbc);
     }

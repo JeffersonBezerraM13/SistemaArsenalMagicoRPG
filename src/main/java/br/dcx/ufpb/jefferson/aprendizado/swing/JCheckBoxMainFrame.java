@@ -31,8 +31,12 @@ public class JCheckBoxMainFrame {
         panel.add(checkBox);
 
         frame.add(panel);
+        frame.setVisible(true);
     }
     public void show(){
         this.frame.setVisible(true);
+    }
+    public static void main(String [] args){
+        JCheckBoxMainFrame janela = new JCheckBoxMainFrame();
     }
 }

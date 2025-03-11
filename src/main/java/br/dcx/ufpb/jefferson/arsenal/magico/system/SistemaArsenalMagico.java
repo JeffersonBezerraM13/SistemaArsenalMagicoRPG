@@ -1,4 +1,10 @@
-package br.dcx.ufpb.jefferson.arsenal.magico;
+package br.dcx.ufpb.jefferson.arsenal.magico.system;
+
+import br.dcx.ufpb.jefferson.arsenal.magico.entities.Magia;
+import br.dcx.ufpb.jefferson.arsenal.magico.entities.TipoElementar;
+import br.dcx.ufpb.jefferson.arsenal.magico.exception.MagiaInexistenteException;
+import br.dcx.ufpb.jefferson.arsenal.magico.exception.MagiaJaExisteException;
+import br.dcx.ufpb.jefferson.arsenal.magico.gravador.GravadorDeDados;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -6,7 +12,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-public class SistemaArsenalMagico implements ArsenalMagico{
+public class SistemaArsenalMagico implements ArsenalMagico {
     private HashMap<Integer, Magia> magias;
     private GravadorDeDados gravadorDeDados;
 
@@ -16,7 +22,7 @@ public class SistemaArsenalMagico implements ArsenalMagico{
     }
 
     @Override
-    public void cadastrarMagia(Integer id, String nome, TipoElementar tipo,Double dano, int custoDeMana) throws MagiaJaExisteException {
+    public void cadastrarMagia(Integer id, String nome, TipoElementar tipo, Double dano, int custoDeMana) throws MagiaJaExisteException {
         if(!this.magias.containsKey(id)){
             this.magias.put(id, new Magia(id,nome,tipo,dano,custoDeMana));
         } else throw new MagiaJaExisteException("A magia com o ID "+id+" já está cadastrado no sistema");

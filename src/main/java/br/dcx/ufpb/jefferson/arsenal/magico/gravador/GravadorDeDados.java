@@ -1,4 +1,6 @@
-package br.dcx.ufpb.jefferson.arsenal.magico;
+package br.dcx.ufpb.jefferson.arsenal.magico.gravador;
+
+import br.dcx.ufpb.jefferson.arsenal.magico.entities.Magia;
 
 import java.io.*;
 import java.util.*;
@@ -9,7 +11,7 @@ public class GravadorDeDados {
     public GravadorDeDados(){
         this.arquivoMagias = "magias.dat";
     }
-    public HashMap<Integer,Magia> recuperaMagias() throws IOException {
+    public HashMap<Integer, Magia> recuperaMagias() throws IOException {
         try(ObjectInputStream in = new ObjectInputStream(new FileInputStream(this.arquivoMagias))) {
             HashMap<Integer,Magia> magiasRecuperadas = (HashMap<Integer,Magia>) in.readObject();
             return magiasRecuperadas;

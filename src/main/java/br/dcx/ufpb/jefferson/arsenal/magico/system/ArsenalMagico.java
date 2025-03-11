@@ -1,4 +1,9 @@
-package br.dcx.ufpb.jefferson.arsenal.magico;
+package br.dcx.ufpb.jefferson.arsenal.magico.system;
+
+import br.dcx.ufpb.jefferson.arsenal.magico.entities.Magia;
+import br.dcx.ufpb.jefferson.arsenal.magico.entities.TipoElementar;
+import br.dcx.ufpb.jefferson.arsenal.magico.exception.MagiaInexistenteException;
+import br.dcx.ufpb.jefferson.arsenal.magico.exception.MagiaJaExisteException;
 
 import java.io.IOException;
 import java.util.Collection;
