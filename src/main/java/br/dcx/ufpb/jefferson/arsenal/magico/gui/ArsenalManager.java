@@ -279,23 +279,76 @@ public class ArsenalManager {
         //botao para remover todas as magias
         JButton botaoSelecionar = new JButton("Selecionar Magia");
         botaoSelecionar.addActionListener(alal -> {
+            ImageIcon iconNull = new ImageIcon((String)null);
             int linhaSelecionada = magicTable.getSelectedRow();
-            boolean magiasNaoForamSelecionas = false;
-            for(int linha = 0; linha < tableModel.getRowCount(); linha++){
-                if (tableModel.getValueAt(linha, 0).equals(true)) {
-                    magiasNaoForamSelecionas = false;
-                    magicSystem.removerMagia((Integer)tableModel.getValueAt(linha,1));
-                } else {
-                    magiasNaoForamSelecionas = true;
-                }
+
+            Magia m = magicSystem.getMagia((Integer)tableModel.getValueAt(linhaSelecionada,0));
+            String alterarOptions = JOptionPane.showInputDialog(null, """
+                                    1 - ID
+                                    2 - Nome
+                                    3 - Tipo elementar
+                                    4 - Dano
+                                    5 - Custo de mana
+                                    ""","Escolhe o dado que deseja alterar",JOptionPane.QUESTION_MESSAGE ,iconNull,null,null).toString();
+            switch (alterarOptions){
+                case "1":
+                    try {
+                        Integer idAlterar = Integer.parseInt(JOptionPane.showInputDialog(null, "Insira o ID novo para a magia " + m.toString(), "Alterar magia", JOptionPane.QUESTION_MESSAGE, iconNull, null, null).toString());
+                        m.setId(idAlterar);
+                        JOptionPane.showMessageDialog(null, "ID alterado\n" + m,"Alterar ID",JOptionPane.INFORMATION_MESSAGE,iconNull);
+                    } catch (NumberFormatException e){
+                        JOptionPane.showMessageDialog(null,"Insira um valor inteiro válido","Mensagem do sistema",JOptionPane.INFORMATION_MESSAGE,iconNull);
+                    }
+                    break;
+                case "2":
+                    String nomeAlterar = JOptionPane.showInputDialog(null,"Insira um nome novo para a magia "+m.toString(),"Alterar magia", JOptionPane.QUESTION_MESSAGE,iconNull,null,null).toString();
+                    if(nomeAlterar.isEmpty() || nomeAlterar.isBlank()){
+                        JOptionPane.showMessageDialog(null,"Insira um novo nome válido","Mensagem do sistema",JOptionPane.INFORMATION_MESSAGE,iconNull);
+                        break;
+                    }
+                    m.setNome(nomeAlterar);
+                    JOptionPane.showMessageDialog(null,"Nome alterado\n"+m,"Alterar nome",JOptionPane.INFORMATION_MESSAGE,iconNull);
+                    break;
+                case "3":
+                    TipoElementar [] tipoOptions = {TipoElementar.AGUA
+                            , TipoElementar.GELO
+                            , TipoElementar.AR
+                            , TipoElementar.TERRA
+                            , TipoElementar.FOGO};
+                    JComboBox<TipoElementar> comboBoxTipoElementar = new JComboBox<>(tipoOptions);
+                    TipoElementar tipoElementarAlterar;
+                    if (JOptionPane.showConfirmDialog(null,comboBoxTipoElementar,"Tipo elementar", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,iconNull) == JOptionPane.OK_OPTION) {
+                        tipoElementarAlterar = (TipoElementar) comboBoxTipoElementar.getSelectedItem();
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Cadastro cancelado!","Mensagem do sistema",JOptionPane.INFORMATION_MESSAGE,iconNull);
+                        break;
+                    }
+                    m.setTipo(tipoElementarAlterar);
+                    JOptionPane.showMessageDialog(null,"Tipo elementar alterado "+m,"Alterar tipo elementar",JOptionPane.INFORMATION_MESSAGE,iconNull);
+                    break;
+                case "4":
+                    try {
+                        Double danoAlterar = Double.parseDouble(JOptionPane.showInputDialog(null, "Insira um dano novo para a magia " + m.toString(), "Alterar dano", JOptionPane.QUESTION_MESSAGE, iconNull, null, null).toString());
+                        m.setDano(danoAlterar);
+                        JOptionPane.showMessageDialog(null, "Dano alterado " + m, "Alterar dano", JOptionPane.INFORMATION_MESSAGE, iconNull);
+                    } catch (NumberFormatException e){
+                        JOptionPane.showMessageDialog(null,"Insira um valor real para representar o dano da magia","Mensagem do sistema",JOptionPane.INFORMATION_MESSAGE,iconNull);
+                    }
+                    break;
+                case "5":
+                    try {
+                        int manaAletar = Integer.parseInt(JOptionPane.showInputDialog(null, "Insira um novo valor para a mana da magia " + m.toString(), "Alterar mana", JOptionPane.QUESTION_MESSAGE, iconNull, null, null).toString());
+                        m.setCustoDeMana(manaAletar);
+                        JOptionPane.showMessageDialog(null, "Mana alterada " + m, "Mensagem do sistema", JOptionPane.INFORMATION_MESSAGE, iconNull);
+                    } catch (NumberFormatException e){
+                        JOptionPane.showMessageDialog(null,"Insira um número inteiro válido referenta ao novo custo de mana","Mensagem do sistema",JOptionPane.INFORMATION_MESSAGE,iconNull);
+                    }
+                    break;
+                default:
+                    break;
             }
-            if(magiasNaoForamSelecionas){
-                showMessage("Mensagem do sistema","Não há mágias selecionadas");
-            } else {
-                this.showMainScreen();
-                this.actionFrame.setVisible(false);
-                showMessage("Mensagem do sistema", "Mágias removidas com sucesso!");
-            }
+            this.actionFrame.setVisible(false);
+            this.mainFrame.setVisible(true);
         });
         //botoa de voltar
         JButton voltarButton = new JButton("Voltar");
