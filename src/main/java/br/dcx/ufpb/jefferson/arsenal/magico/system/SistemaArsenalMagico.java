@@ -43,13 +43,14 @@ public class SistemaArsenalMagico implements ArsenalMagico {
 
     @Override
     public List<Magia> getMagiasPorTipoElementar(TipoElementar tipoElementar) {
-        List<Magia> magiasPorTipoElementar = new LinkedList<>();
-        for(Magia m: this.magias.values()){
-            if(m.getTipo() == tipoElementar){
-                magiasPorTipoElementar.add(m);
-            }
-        }
-        return magiasPorTipoElementar;
+        return this.magias.values().stream().filter(m -> m.getTipo() == tipoElementar).toList();
+//        List<Magia> magiasPorTipoElementar = new LinkedList<>();
+//        for(Magia m: this.magias.values()){
+//            if(m.getTipo() == tipoElementar){
+//                magiasPorTipoElementar.add(m);
+//            }
+//        }
+//        return magiasPorTipoElementar;
     }
 
     @Override
